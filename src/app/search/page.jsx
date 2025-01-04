@@ -1,11 +1,11 @@
 'use client';
-import Head from 'next/head';
-import Navbar from '../app/components/Navbar';
-import Sidebar from './components/Sidebar';
 import { useState } from 'react';
-import VideoCard from './components/VideoCard';
+import Head from 'next/head';
+import Navbar from '@/app/components/Navbar';
+import Sidebar from '@/app/components/Sidebar';
+import VideoCardListView from '@/app/components/VideoCardListView';
 
-export default function HomePage() {
+export default function Search() {
   const [videos, setVidoes] = useState([]);
 
 
@@ -32,10 +32,10 @@ export default function HomePage() {
                 <p>Please try to search something else.</p>
               </div>
               :
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
+              <div className="grid grid-cols-1 gap-4 mt-4">
                 {
                   Array.from({ length: 6 }).map((_, idx) => (
-                    <VideoCard key={idx} />
+                    <VideoCardListView key={idx} />
                   ))
                 }
               </div>
