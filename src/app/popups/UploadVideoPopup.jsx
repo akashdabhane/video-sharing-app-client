@@ -1,8 +1,8 @@
 'use client';
 import React, { useState } from 'react';
 
-function UploadVideo() {
-    const [isUploadModalOpen, setUploadModalOpen] = useState(false);
+function UploadVideo({ isUploadModalOpen, setUploadModalOpen }) {
+    // const [isUploadModalOpen, setUploadModalOpen] = useState(false);
     const [isUploading, setUploading] = useState(false);
     const [isUploadComplete, setUploadComplete] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
@@ -29,16 +29,6 @@ function UploadVideo() {
             <div className="flex">
 
                 <main className="flex-1">
-                    {/* Main Content */}
-                    <div className="p-6">
-                        <button
-                            onClick={() => setUploadModalOpen(true)}
-                            className="bg-purple-500 px-4 py-2 rounded"
-                        >
-                            Upload Video
-                        </button>
-                    </div>
-
                     {/* Upload Modal */}
                     {
                         isUploadModalOpen && (
@@ -46,19 +36,19 @@ function UploadVideo() {
                                 <div className="bg-gray-800 p-6 rounded-lg w-96">
                                     {
                                         (!isUploading && !isUploadComplete) && (
-                                            <UploadVideoPopup />
+                                            <UploadVideoPopup handleFileUpload={handleFileUpload} setUploadModalOpen={setUploadModalOpen} />
                                         )
                                     }
 
                                     {
                                         isUploading && (
-                                            <UploadingVideoPopup />
+                                            <UploadingVideoPopup uploadProgress={uploadProgress} setUploading={setUploading} setUploadModalOpen={setUploadModalOpen} />
                                         )
                                     }
 
                                     {
                                         isUploadComplete && (
-                                            <UploadedVideoPopup />
+                                            <UploadedVideoPopup setUploadModalOpen={setUploadModalOpen} />
                                         )
                                     }
                                 </div>
@@ -70,10 +60,10 @@ function UploadVideo() {
     );
 }
 
-export default App;
+export default UploadVideo;
 
 
-function UploadVideoPopup() {
+function UploadVideoPopup({ handleFileUpload, setUploadModalOpen }) {
 
     return (
         <div>
@@ -104,7 +94,7 @@ function UploadVideoPopup() {
     )
 }
 
-function UploadingVideoPopup() {
+function UploadingVideoPopup({ uploadProgress, setUploading, setUploadModalOpen }) {
 
     return (
         <div>
@@ -132,7 +122,7 @@ function UploadingVideoPopup() {
     )
 }
 
-function UploadedVideoPopup() {
+function UploadedVideoPopup({ setUploadModalOpen }) {
 
     return (
         <div>

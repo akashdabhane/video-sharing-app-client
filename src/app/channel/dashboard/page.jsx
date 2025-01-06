@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { FaEye, FaHeart, FaUser, FaTrashAlt, FaEdit } from "react-icons/fa";
 import { HiPlus } from "react-icons/hi";
@@ -113,34 +114,36 @@ const VideoList = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {videos.map((video) => (
-                        <tr key={video.id} className="border-t border-gray-600 hover:bg-gray-800">
-                            <td className="py-2 px-4">
-                                <span
-                                    className={`inline-block px-3 py-1 text-sm rounded-md font-medium ${video.status === "Published"
-                                        ? "bg-green-700 text-green-200"
-                                        : "bg-orange-700 text-orange-200"
-                                        }`}
-                                >
-                                    {video.status}
-                                </span>
-                            </td>
-                            <td className="py-2 px-4">{video.title}</td>
-                            <td className="py-2 px-4">
-                                <span className="text-green-400 mr-2">{video.likes} likes</span>
-                                <span className="text-red-400">{video.dislikes} dislikes</span>
-                            </td>
-                            <td className="py-2 px-4">{video.date}</td>
-                            <td className="py-2 px-4 flex items-center gap-4">
-                                <button className="text-gray-400 hover:text-white">
-                                    <FaEdit />
-                                </button>
-                                <button className="text-gray-400 hover:text-red-500">
-                                    <FaTrashAlt />
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
+                    {
+                        videos.map((video) => (
+                            <tr key={video.id} className="border-t border-gray-600 hover:bg-gray-800">
+                                <td className="py-2 px-4">
+                                    <span
+                                        className={`inline-block px-3 py-1 text-sm rounded-md font-medium ${video.status === "Published"
+                                            ? "bg-green-700 text-green-200"
+                                            : "bg-orange-700 text-orange-200"
+                                            }`}
+                                    >
+                                        {video.status}
+                                    </span>
+                                </td>
+                                <td className="py-2 px-4">{video.title}</td>
+                                <td className="py-2 px-4">
+                                    <span className="text-green-400 mr-2">{video.likes} likes</span>
+                                    <span className="text-red-400">{video.dislikes} dislikes</span>
+                                </td>
+                                <td className="py-2 px-4">{video.date}</td>
+                                <td className="py-2 px-4 flex items-center gap-4">
+                                    <button className="text-gray-400 hover:text-white">
+                                        <FaEdit />
+                                    </button>
+                                    <button className="text-gray-400 hover:text-red-500">
+                                        <FaTrashAlt />
+                                    </button>
+                                </td>
+                            </tr>
+                        ))
+                    }
                 </tbody>
             </table>
         </div>

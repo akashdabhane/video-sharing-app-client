@@ -5,7 +5,7 @@ import Sidebar from "@/app/components/Sidebar";
 import { useState } from "react";
 
 export default function SettingsPage() {
-    const [tab, setTab] = useState("personal");
+    const [tab, setTab] = useState("Personal Information");
 
     return (
         <div className="min-h-screen bg-black text-white flex flex-col lg:flex-row">
@@ -18,12 +18,12 @@ export default function SettingsPage() {
                         <ChannelCard />
 
                         {/* Tabs */}
-                        <nav className="flex mt-4">
+                        <nav className="flex">
                             {["Personal Information", "Channel Information", "Change Password"].map((label, index) => (
                                 <button
                                     key={index}
-                                    onClick={() => setTab(label.toLowerCase().replace(" ", "-"))}
-                                    className={`flex-grow py-2 text-center ${tab === label.toLowerCase().replace(" ", "-") ? "border-b-2 border-purple-500" : "text-gray-400"
+                                    onClick={() => setTab(label)}
+                                    className={`flex-grow py-2 text-center ${tab === label ? "border-b-2 border-purple-500" : "text-gray-400"
                                         }`}
                                 >
                                     {label}
@@ -33,21 +33,15 @@ export default function SettingsPage() {
 
                         {/* Forms */}
                         {
-                            tab === "personal-information" && (
-                                <EditPersonalInfoForm />
-                            )
+                            tab === "Personal Information" && <EditPersonalInfoForm />
                         }
 
                         {
-                            tab === "channel-information" && (
-                                <EditChannelInfoForm />
-                            )
+                            tab === "Channel Information" && <EditChannelInfoForm />
                         }
 
                         {
-                            tab === "change-password" && (
-                                <ChangePasswordForm />
-                            )
+                            tab === "Change Password" && <ChangePasswordForm />
                         }
                     </div>
                 </div>

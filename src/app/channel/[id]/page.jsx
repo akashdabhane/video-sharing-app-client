@@ -11,12 +11,33 @@ import TweetCard from "@/app/components/TweetCard";
 import SubscriberCard from "@/app/components/SubscriberCard";
 import { MdOutlineEmojiEmotions, MdMoreHoriz } from "react-icons/md";
 import ChannelCard from "@/app/components/ChannelCard";
+import UploadVideo from "@/app/popups/UploadVideoPopup";
 
 
 export default function ChannelPage() {
+    const [nav, setNav] = useState(0);
     const router = useRouter();
     const { id } = router;
 
+    const menu = [
+        {
+            id: 0,
+            title: "Videos",
+        },
+        {
+            id: 1,
+            title: "Playlist",
+        },
+        {
+            id: 2,
+            title: "Tweets",
+        },
+        {
+            id: 3,
+            title: "Subscribed",
+        },
+
+    ]
 
     return (
         <div className="flex-1 ">
@@ -25,15 +46,32 @@ export default function ChannelPage() {
                 <Sidebar />
                 <div className="p-4 w-full">
                     <ChannelCard />
-                    <div className="mt-6 lg:px-40 border-b border-gray-700 ">
-                        <nav className="grid grid-cols-4 text-center">
-                            <Link href="#videos" className="pb-2 border-b-2 border-purple-500">Videos</Link>
-                            <Link href="#playlist" className="pb-2 text-gray-400">Playlist</Link>
-                            <Link href="#tweets" className="pb-2 text-gray-400">Tweets</Link>
-                            <Link href="#subscribed" className="pb-2 text-gray-400">Subscribed</Link>
-                        </nav>
+                    <div className="mt-6 border-b border-gray-700 ">
+                        <ul className="grid grid-cols-4 text-center">
+                            {
+                                menu.map((item) => (
+                                    <li className={`pb-2 border-b-2 cursor-pointer ${nav === item.id ? "border-purple-500" : "text-gray-400"} `}
+                                        key={item.id}
+                                        onClick={() => setNav(item.id)}
+                                    >
+                                        {item.title}
+                                    </li>
+                                ))
+                            }
+                        </ul>
                     </div>
-                    <ChannelVideos />
+                    {
+                        nav === 0 && <ChannelVideos />
+                    }
+                    {
+                        nav === 1 && <ChannelPlayLists />
+                    }
+                    {
+                        nav === 2 && <ChannelTweets />
+                    }
+                    {
+                        nav === 4 && <ChannelSubscribers />
+                    }
                 </div>
             </div>
         </div>
@@ -41,6 +79,7 @@ export default function ChannelPage() {
 }
 
 function ChannelVideos() {
+    const [isUploadModalOpen, setUploadModalOpen] = useState(false);
     const [videos, setVideos] = useState([]);
     const router = useRouter();
     const { id } = router;
@@ -48,7 +87,8 @@ function ChannelVideos() {
     return (
         <>
             {
-                videos.length > 0 ?
+                videos.length > 0
+                    ?
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
                         {
                             Array.from({ length: 6 }).map((_, idx) => (
@@ -59,13 +99,13 @@ function ChannelVideos() {
                     :
                     <div id="videos" className="mt-4">
                         <div className="text-center text-gray-400">
-                            <h className="text-lg">No videos uploaded</h>
+                            <h1 className="text-lg">No videos uploaded</h1>
                             <p className="text-sm">This page has yet to upload a video. Search another page in order to find more videos.</p>
                             <div className="flex justify-center">
                                 {
-                                    id === "234343" && (
+                                    "234343" === "234343" && (
                                         <button className="hover:bg-purple-700 bg-purple-500 text-white px-4 py-2 rounded-md mt-4"
-
+                                            onClick={() => setUploadModalOpen(true)}
                                         >
                                             New Video
                                         </button>
@@ -75,6 +115,10 @@ function ChannelVideos() {
                         </div>
                     </div>
 
+            }
+
+            {
+                isUploadModalOpen && <UploadVideo isUploadModalOpen={isUploadModalOpen} setUploadModalOpen={setUploadModalOpen} />
             }
         </>
     )
@@ -97,12 +141,10 @@ function ChannelPlayLists() {
                         }
                     </div>
                     :
-                    <div id="videos" className="mt-4">
-                        <div className="text-center text-gray-400">
-                            <h className="text-lg">No playlist created</h>
-                            <p className="text-sm">There are no playlist created on this channel.</p>
-                        </div>
-                    </div>
+                    <EmptySectionComp
+                        title={"No playlist created"}
+                        description={"There are no playlist created on this channel."}
+                    />
 
             }
         </>
@@ -161,7 +203,7 @@ function ChannelTweets() {
                             )
                         }
                         <div className="text-center text-gray-400">
-                            <h className="text-lg">No Tweets</h>
+                            <h1 className="text-lg">No Tweets</h1>
                             <p className="text-sm">This channel has yet to make a Tweet.</p>
                         </div>
                     </div>
@@ -186,13 +228,24 @@ function ChannelSubscribers() {
                         }
                     </div>
                     :
-                    <div id="subscribed" className="mt-4">
-                        <div className="text-center text-gray-400">
-                            <h className="text-lg">No Subscribers</h>
-                            <p className="text-sm">This channel has no subscribers yet.</p>
-                        </div>
-                    </div>
+                    <EmptySectionComp
+                        title={"No Subscribers"}
+                        description={"This channel has no subscribers yet."}
+                    />
             }
         </>
+    )
+}
+
+
+const EmptySectionComp = ({ title, description, icon }) => {
+
+    return (
+        <div className="mt-4">
+            <div className="text-center text-gray-400">
+                <h1 className="text-lg">{title}</h1>
+                <p className="text-sm">{description}</p>
+            </div>
+        </div>
     )
 }

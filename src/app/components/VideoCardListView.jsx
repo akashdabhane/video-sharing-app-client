@@ -1,11 +1,15 @@
 import React from 'react';
 import Image from 'next/image';
 import Banner from '../images/banner.png';
+import { useRouter } from 'next/navigation';
 
 function VideoCardListView() {
+    const router = useRouter();
+
+
     return (
-        <div>
-            <div className="flex mx-6 bg-gray-900 rounded-lg overflow-hidden shadow-lg cursor-pointer" onClick={() => router.push(`/watch/v/${"234"}`)}>
+        <div onClick={() => router.push("/watch/v/3438")}>
+            <div className="flex mx-2 md:mx-6 bg-gray-900 rounded-lg overflow-hidden shadow-lg cursor-pointer">
                 <div className="relative w-80 h-48">
                     <Image
                         src={Banner}
