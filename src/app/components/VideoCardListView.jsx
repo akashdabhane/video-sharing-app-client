@@ -3,14 +3,14 @@ import Image from 'next/image';
 import Banner from '../images/banner.png';
 import { useRouter } from 'next/navigation';
 
-function VideoCardListView() {
+function VideoCardListView({ cross }) {
     const router = useRouter();
 
 
     return (
         <div onClick={() => router.push("/watch/v/3438")}>
-            <div className="flex mx-2 md:mx-6 bg-gray-900 rounded-lg overflow-hidden shadow-lg cursor-pointer">
-                <div className="relative w-80 h-48">
+            <div className={`flex ${cross ? "flex-row" : "flex-col"} md:flex-row mx-2 md:mx-6 bg-gray-900 rounded-lg overflow-hidden shadow-lg cursor-pointer`}>
+                <div className="relative w-full md:w-80 h-48">
                     <Image
                         src={Banner}
                         alt="Video Thumbnail"

@@ -1,15 +1,15 @@
+"use client";
 import Image from 'next/image';
 import React from 'react';
 import Banner from '@/app/images/banner.png';
 
 function PlaylistCard() {
     return (
-        <div className='w-[28rem] m-4'>
+        <div className='w-full md:w-[28rem] md:m-4'>
             <div className="">
                 <Image
                     src={Banner}
                     alt="playlist banner"
-                    objectFit="cover"
                     className="w-full h-64"
                 />
                 <div className="relative -top-20 px-4 py-6 bg-gray-800/50 backdrop-blur-md">

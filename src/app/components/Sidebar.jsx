@@ -61,15 +61,10 @@ function Sidebar() {
         }
     }, []);
 
-    // const handleOnMouseEnter = () => {
-    //     if (pathname.startsWith("/watch/v/")) {
-    //         setMinSidebar(false);
-    //     }
-    // }
 
     return (
-        <div className={`${minSidebar ? "w-20" : "w-72"} hidden md:block`}>
-            <nav className={`${minSidebar ? "md:w-20" : "md:w-64"} bg-black p-4 border-r border-gray-700 fixed z-30 w-full h-[90vh] flex flex-col justify-between`}
+        <div className={`${minSidebar ? "w-20" : "w-72"} hidden md:block group transition-all duration-300 ease-in-out`}>
+            <nav className={`${minSidebar ? "md:w-20" : "md:w-64"} bg-black p-4 border-r border-gray-700 fixed z-30 w-full h-[90vh] flex flex-col justify-between group transition-all duration-300 ease-in-out`}
                 onMouseEnter={() => {
                     pathname.startsWith("/watch/v/") && setMinSidebar(false)
                 }}
@@ -84,7 +79,9 @@ function Sidebar() {
                                 key={index}
                                 onClick={() => router.push(item.link)}
                             >
-                                {item.icon}
+                                <span>
+                                    {item.icon}
+                                </span>
                                 <span className={`${minSidebar && "hidden"}`}> {item.title} </span>
                             </li>
                         ))

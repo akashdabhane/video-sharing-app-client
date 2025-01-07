@@ -1,11 +1,9 @@
 "use client";
 import { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Sidebar from "@/app/components/Sidebar";
 import Navbar from "@/app/components/Navbar";
 import VideoCard from "@/app/components/VideoCard";
-import Banner from "@/app/images/banner.png";
 import PlaylistCard from "@/app/components/PlaylistCard";
 import TweetCard from "@/app/components/TweetCard";
 import SubscriberCard from "@/app/components/SubscriberCard";

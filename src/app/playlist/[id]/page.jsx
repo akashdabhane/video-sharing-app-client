@@ -11,16 +11,16 @@ export default function ChannelPage() {
             <Navbar />
             <div className="min-h-screen bg-black text-white flex">
                 <Sidebar />
-                <div className="p-4 w-full flex">
+                <div className="p-2 md:p-4 w-full flex flex-col md:flex-row">
                     <>
                         <PlaylistCard />
-                        
+
                     </>
-                    <div className="grid grid-cols-1 gap-4 mt-4">
-                        <VideoCardListView />
-                        <VideoCardListView />
-                        <VideoCardListView />
-                        <VideoCardListView />
+                    <div className="grid grid-cols-1 gap-3 md:gap-4 mt-4">
+                        <VideoCardListView cross={true} />
+                        <VideoCardListView cross={true} />
+                        <VideoCardListView cross={true} />
+                        <VideoCardListView cross={true} />
                     </div>
                 </div>
             </div>

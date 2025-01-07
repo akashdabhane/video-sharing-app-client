@@ -55,7 +55,7 @@ export default function SettingsPage() {
 function EditPersonalInfoForm() {
 
     return (
-        <section className=" mt-4 flex justify-center space-x-8">
+        <section className=" mt-4 flex flex-col md:flex-row justify-center md:space-x-8">
             <div className="">
                 <h2 className="text-lg font-semibold">Personal Info</h2>
                 <p className="text-gray-400 mb-4">Update your photo and personal details.</p>
@@ -103,7 +103,7 @@ function EditPersonalInfoForm() {
 function EditChannelInfoForm() {
 
     return (
-        <section className="mt-4 flex justify-center space-x-8">
+        <section className="mt-4 flex flex-col md:flex-row justify-center md:space-x-8">
             <div className="">
                 <h2 className="text-lg font-semibold">Channel Info</h2>
                 <p className="text-gray-400 mb-4">Update your Channel details here.</p>
@@ -149,12 +149,12 @@ function EditChannelInfoForm() {
 function ChangePasswordForm() {
 
     return (
-        <section className="mt-4 flex justify-center space-x-8">
+        <section className="mt-4 flex flex-col md:flex-row justify-center md:space-x-8">
             <div className="">
                 <h2 className="text-lg font-semibold">Password</h2>
                 <p className="text-gray-400 mb-4">Please enter your current password to change your password.</p>
             </div>
-            <form className="space-y-4 w-[30rem]">
+            <form className="space-y-4 md:w-[30rem]">
                 <div>
                     <label className="block text-sm">Current password</label>
                     <input
