@@ -1,20 +1,19 @@
-"use client";
-import { useEffect, useState } from "react";
-import Sidebar from "@/components/Sidebar";
-import Navbar from "@/components/Navbar";
-import PlaylistCard from "@/components/PlaylistCard";
-import VideoCardListView from "@/components/VideoCardListView";
-import { baseUrl } from "@/utils/helper";
-import axios from "axios";
-import Cookies from "js-cookie";
-import { useParams } from "next/navigation";
+'use client';
+import React, { useEffect, useState } from 'react';
+import Navbar from '@/components/Navbar';
+import PlaylistCard from '@/components/PlaylistCard';
+import Sidebar from '@/components/Sidebar';
+import VideoCardListView from '@/components/VideoCardListView';
+import axios from 'axios';
+import { baseUrl } from '@/utils/helper';
+import Cookies from 'js-cookie';
 
-export default function PlaylistPage() {
-    const [playlistVideos, setPlaylistVideos] = useState([]);   // temporary solution
-    const { id } = useParams();
+function LikedVideosPage() {
+    const [likedVideos, setLikedvideos] = useState([]);
 
     useEffect(() => {
-        axios.post(`${baseUrl}/playlist/${id}`, {}, {
+        //---------------    /videos/channel/66843834742908baa9ef75d0
+        axios.get(`${baseUrl}/likes/videos`, {
             withCredentials: true,
             headers: {
                 'Authorization': `Bearer ${Cookies.get('accessToken')}`
@@ -22,7 +21,7 @@ export default function PlaylistPage() {
         })
             .then(response => {
                 console.log(response.data.data);
-                setPlaylistVideos(response.data.data);
+                setLikedvideos(response.data.data);
             })
             .catch(error => {
                 console.error(error);
@@ -31,7 +30,6 @@ export default function PlaylistPage() {
                 // loading false
             })
     }, [])
-
 
 
     return (
@@ -46,21 +44,21 @@ export default function PlaylistPage() {
                     </>
                     <div className="grid grid-cols-1 gap-3 md:gap-4 mt-4 w-full">
                         {
-                            playlistVideos.length > 0
+                            likedVideos.length > 0
                                 ?
-                                playlistVideos.map(video => (
-                                    <VideoCardListView cross={true} video={video} key={video._id} />
+                                likedVideos.map(video => (
+                                    <VideoCardListView cross={true} key={video._id} video={video} />
                                 ))
                                 :
-                                <div className="text-center mt-40">
-                                    <p>
-                                        No videos in this playlist yet.
-                                    </p>
+                                <div className='text-white text-center my-40'>
+                                    <h2>No Liked Videos</h2>
                                 </div>
                         }
                     </div>
                 </div>
             </div>
         </div>
-    );
+    )
 }
+
+export default LikedVideosPage

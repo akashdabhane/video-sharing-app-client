@@ -1,5 +1,6 @@
+'use client';
 import React from "react";
-import Navbar from "../components/Navbar";
+import Navbar from "../../components/Navbar";
 
 const TermsAndConditions = () => {
     return (

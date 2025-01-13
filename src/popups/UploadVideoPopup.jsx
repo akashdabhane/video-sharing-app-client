@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 
 function UploadVideo({ isUploadModalOpen, setUploadModalOpen }) {
-    // const [isUploadModalOpen, setUploadModalOpen] = useState(false);
     const [isUploading, setUploading] = useState(false);
     const [isUploadComplete, setUploadComplete] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
@@ -23,40 +22,35 @@ function UploadVideo({ isUploadModalOpen, setUploadModalOpen }) {
             });
         }, 300);
     };
-
+    console.log(isUploadModalOpen)
     return (
-        <div className="min-h-screen bg-black text-white">
-            <div className="flex">
+        <>
+            {/* Upload Modal */}
+            {
+                isUploadModalOpen && (
+                    <div className="sticky top-40 right-40 inset-0 bg-black text-white min-h-screen bg-opacity-75 flex items-center justify-center">
+                        <div className="bg-gray-800 p-6 rounded-lg w-96">
+                            {
+                                (!isUploading && !isUploadComplete) && (
+                                    <UploadVideoPopup handleFileUpload={handleFileUpload} setUploadModalOpen={setUploadModalOpen} />
+                                )
+                            }
 
-                <main className="flex-1">
-                    {/* Upload Modal */}
-                    {
-                        isUploadModalOpen && (
-                            <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center">
-                                <div className="bg-gray-800 p-6 rounded-lg w-96">
-                                    {
-                                        (!isUploading && !isUploadComplete) && (
-                                            <UploadVideoPopup handleFileUpload={handleFileUpload} setUploadModalOpen={setUploadModalOpen} />
-                                        )
-                                    }
+                            {
+                                isUploading && (
+                                    <UploadingVideoPopup uploadProgress={uploadProgress} setUploading={setUploading} setUploadModalOpen={setUploadModalOpen} />
+                                )
+                            }
 
-                                    {
-                                        isUploading && (
-                                            <UploadingVideoPopup uploadProgress={uploadProgress} setUploading={setUploading} setUploadModalOpen={setUploadModalOpen} />
-                                        )
-                                    }
-
-                                    {
-                                        isUploadComplete && (
-                                            <UploadedVideoPopup setUploadModalOpen={setUploadModalOpen} />
-                                        )
-                                    }
-                                </div>
-                            </div>
-                        )}
-                </main>
-            </div>
-        </div>
+                            {
+                                isUploadComplete && (
+                                    <UploadedVideoPopup setUploadModalOpen={setUploadModalOpen} />
+                                )
+                            }
+                        </div>
+                    </div>
+                )}
+        </>
     );
 }
 

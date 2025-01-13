@@ -1,20 +1,37 @@
 'use client';
-import { useState } from 'react';
-import Head from 'next/head';
-import Navbar from '@/app/components/Navbar';
-import Sidebar from '@/app/components/Sidebar';
-import VideoCardListView from '@/app/components/VideoCardListView';
+import { useState, useEffect } from 'react';
+import Navbar from '@/components/Navbar';
+import Sidebar from '@/components/Sidebar';
+import VideoCardListView from '@/components/VideoCardListView';
+import axios from 'axios';
+import { baseUrl } from '@/utils/helper';
+import Cookies from 'js-cookie';
 
 export default function Search() {
-  const [videos, setVidoes] = useState([]);
+  const [searchResultVideos, setSearchResultVideos] = useState([]);
 
+  useEffect(() => {
+    // hit search api when ready
+    axios.get(`${baseUrl}/videos/channel/66843834742908baa9ef75d0`, {
+      withCredentials: true,
+      headers: {
+        'Authorization': `Bearer ${Cookies.get('accessToken')}`
+      },
+    })
+      .then(response => {
+        console.log(response.data.data);
+        setSearchResultVideos(response.data.data);
+      })
+      .catch(error => {
+        console.error(error);
+      })
+      .finally(() => {
+        // loading false
+      })
+  }, [])
 
   return (
     <div className="bg-black text-white min-h-screen">
-      <Head>
-        <title>Video Sharing Platform</title>
-      </Head>
-
       <Navbar />
 
       <div className="flex flex-col md:flex-row">
@@ -23,7 +40,7 @@ export default function Search() {
         {/* Main Content */}
         <main className="flex-1 p-4">
           {
-            videos.length > 0 ?
+            searchResultVideos.length < 0 ?
               <div className="flex flex-col items-center justify-center min-h-[50vh] text-gray-400">
                 <div className="flex items-center justify-center w-20 h-20 bg-purple-500 rounded-full">
                   <span className="text-white text-3xl">▶</span>
@@ -34,8 +51,8 @@ export default function Search() {
               :
               <div className="grid grid-cols-1 gap-4 mt-4">
                 {
-                  Array.from({ length: 6 }).map((_, idx) => (
-                    <VideoCardListView key={idx} />
+                  searchResultVideos.map((video) => (
+                    <VideoCardListView video={video} key={video._id} />
                   ))
                 }
               </div>

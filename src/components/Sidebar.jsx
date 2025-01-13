@@ -2,11 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { FaHome, FaRegThumbsUp, FaHistory, FaVideo, FaBookmark, FaUsers, FaLifeRing, FaCog } from "react-icons/fa";
+import { useAuth } from '@/contexts/AuthContext';
 
 function Sidebar() {
     const [minSidebar, setMinSidebar] = useState(false);
     const router = useRouter();
     const pathname = usePathname();
+    const { loggedInUser } = useAuth();
 
     const menu = [
         {
@@ -21,12 +23,12 @@ function Sidebar() {
         },
         {
             title: 'History',
-            link: '/history',
+            link: '/watch-history',
             icon: <FaHistory className='text-xl' />,
         },
         {
             title: 'My Content',
-            link: '/channel/343',
+            link: `/channel/${loggedInUser?._id}`,
             icon: <FaVideo className='text-xl' />,
         },
         {
@@ -44,12 +46,12 @@ function Sidebar() {
     const menu2 = [
         {
             title: 'Support',
-            link: '/support',
+            link: '/',
             icon: <FaLifeRing className='text-xl' />,
         },
         {
             title: 'Settings',
-            link: '/settings',
+            link: '/',
             icon: <FaCog className='text-xl' />,
         },
     ]

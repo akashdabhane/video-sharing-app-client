@@ -1,11 +1,14 @@
 "use client";
 import Image from 'next/image';
 import React from 'react';
-import Banner from '@/app/images/banner.png';
+import Banner from '@/images/banner.png';
+import { useRouter } from 'next/navigation';
 
-function PlaylistCard() {
+function PlaylistCard({ playlist, showUserProfile }) {
+    const navigate = useRouter();
+
     return (
-        <div className='w-full md:w-[28rem] md:m-4'>
+        <div className='w-full md:w-[28rem] md:m-4 cursor-pointer' onClick={() => navigate.push(`/playlist/${playlist._id}`)}>
             <div className="">
                 <Image
                     src={Banner}
@@ -23,11 +26,11 @@ function PlaylistCard() {
                     </p>
                 </div>
             </div>
-            <div className="relative -top-16">
-                <h3>React Mestry</h3>
-                <p className='line-clamp-1'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis autem adipisci deserunt animi nesciunt tempore porro numquam similique veniam maiores?</p>
+            <div className="relative -top-[4.5rem] left-2">
+                <h3 className='text-lg'>{playlist?.name}</h3>
+                <p className='line-clamp-1'>{playlist?.description}</p>
             </div>
-            <div className="flex items-center space-x-2 relative -top-10">
+            <div className={`${showUserProfile === false && "hidden"} flex items-center space-x-2 relative -top-10`}>
                 <Image
                     src={Banner}
                     alt="Profile Picture"

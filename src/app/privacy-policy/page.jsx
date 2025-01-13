@@ -1,6 +1,6 @@
 // pages/privacy-policy.js
 import React from 'react';
-import Navbar from '../components/Navbar';
+import Navbar from '../../components/Navbar';
 
 const PrivacyPolicy = () => {
     return (

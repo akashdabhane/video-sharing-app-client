@@ -1,21 +1,44 @@
 "use client";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Sidebar from "@/app/components/Sidebar";
-import Navbar from "@/app/components/Navbar";
-import VideoCard from "@/app/components/VideoCard";
-import PlaylistCard from "@/app/components/PlaylistCard";
-import TweetCard from "@/app/components/TweetCard";
-import SubscriberCard from "@/app/components/SubscriberCard";
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import Sidebar from "@/components/Sidebar";
+import Navbar from "@/components/Navbar";
+import VideoCard from "@/components/VideoCard";
+import PlaylistCard from "@/components/PlaylistCard";
+import TweetCard from "@/components/TweetCard";
+import SubscriberCard from "@/components/SubscriberCard";
 import { MdOutlineEmojiEmotions, MdMoreHoriz } from "react-icons/md";
-import ChannelCard from "@/app/components/ChannelCard";
-import UploadVideo from "@/app/popups/UploadVideoPopup";
+import ChannelCard from "@/components/ChannelCard";
+import UploadVideo from "@/popups/UploadVideoPopup";
+import { baseUrl } from "@/utils/helper";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { useAuth } from "@/contexts/AuthContext";
 
 
 export default function ChannelPage() {
+    const [channel, setChannel] = useState([]);
     const [nav, setNav] = useState(0);
-    const router = useRouter();
-    const { id } = router;
+    const { id } = useParams();
+
+    useEffect(() => {
+        axios.get(`${baseUrl}/users/channel/${id}`, {
+            withCredentials: true,
+            headers: {
+                Authorization: `Bearer ${Cookies.get("accessToken")}`,
+            },
+        })
+            .then(response => {
+                console.log(response.data.data[0]);
+                setChannel(response.data.data[0]);
+            })
+            .catch(error => {
+                console.error(error);
+            })
+            .finally(() => {
+                // loading false
+            })
+    }, [])
 
     const menu = [
         {
@@ -43,7 +66,7 @@ export default function ChannelPage() {
             <div className="min-h-screen bg-black text-white flex">
                 <Sidebar />
                 <div className="p-4 w-full">
-                    <ChannelCard />
+                    <ChannelCard channel={channel} />
                     <div className="mt-6 border-b border-gray-700 ">
                         <ul className="grid grid-cols-4 text-center">
                             {
@@ -68,7 +91,7 @@ export default function ChannelPage() {
                         nav === 2 && <ChannelTweets />
                     }
                     {
-                        nav === 4 && <ChannelSubscribers />
+                        nav === 3 && <ChannelSubscribers />
                     }
                 </div>
             </div>
@@ -77,20 +100,38 @@ export default function ChannelPage() {
 }
 
 function ChannelVideos() {
-    const [isUploadModalOpen, setUploadModalOpen] = useState(false);
     const [videos, setVideos] = useState([]);
-    const router = useRouter();
-    const { id } = router;
+    const [isUploadModalOpen, setUploadModalOpen] = useState(false);
+    const { id } = useParams();
+
+    useEffect(() => {
+        axios.get(`${baseUrl}/videos/channel/${id}`, {
+            withCredentials: true,
+            headers: {
+                'Authorization': `Bearer ${Cookies.get('accessToken')}`
+            },
+        })
+            .then(response => {
+                console.log(response.data.data);
+                setVideos(response.data.data);
+            })
+            .catch(error => {
+                console.error(error);
+            })
+            .finally(() => {
+                // loading
+            })
+    }, []);
 
     return (
         <>
             {
-                videos.length > 0
+                videos && videos.length > 0
                     ?
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 ml-3">
                         {
-                            Array.from({ length: 6 }).map((_, idx) => (
-                                <VideoCard key={idx} />
+                            videos.map((item, index) => (
+                                <VideoCard item={item} key={index} />
                             ))
                         }
                     </div>
@@ -125,16 +166,37 @@ function ChannelVideos() {
 
 function ChannelPlayLists() {
     const [playlists, setPlaylists] = useState([]);
+    const router = useRouter();
+    const { id } = useParams();
+
+    useEffect(() => {
+        axios.get(`${baseUrl}/playlist/user/${id}`, {
+            withCredentials: true,
+            headers: {
+                'Authorization': `Bearer ${Cookies.get('accessToken')}`
+            },
+        })
+            .then(response => {
+                console.log(response.data.data);
+                setPlaylists(response.data.data);
+            })
+            .catch(error => {
+                console.error(error);
+            })
+            .finally(() => {
+                // loading false
+            })
+    }, []);
 
 
     return (
         <>
             {
-                playlists.length > 0 ?
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
+                playlists && playlists.length > 0 ?
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ">
                         {
-                            Array.from({ length: 6 }).map((_, idx) => (
-                                <PlaylistCard key={idx} />
+                            playlists.map((playlist, index) => (
+                                <PlaylistCard playlist={playlist} showUserProfile={false} key={index} onClick={() => router.push(`/playlist/${item._id}`)} />
                             ))
                         }
                     </div>
@@ -143,7 +205,6 @@ function ChannelPlayLists() {
                         title={"No playlist created"}
                         description={"There are no playlist created on this channel."}
                     />
-
             }
         </>
     )
@@ -152,24 +213,44 @@ function ChannelPlayLists() {
 
 function ChannelTweets() {
     const [tweets, setTweets] = useState([]);
-    const router = useRouter();
-    const { id } = router;
+    const { id } = useParams();
+    const { loggedInUser } = useAuth();
+
+    useEffect(() => {
+        axios.get(`${baseUrl}/tweets/user/${id}`, {
+            withCredentials: true,
+            headers: {
+                'Authorization': `Bearer ${Cookies.get('accessToken')}`
+            },
+        })
+            .then(response => {
+                console.log(response.data.data);
+                setTweets(response.data.data);
+            })
+            .catch(error => {
+                console.error(error);
+            })
+            .finally(() => {
+                // loading false
+            })
+    }, [])
 
     return (
         <>
             {
-                tweets.length > 0 ?
-                    <div className="grid grid-cols-1 gap-4 mt-8">
+                tweets && tweets.length > 0 ?
+                    <div className="grid grid-cols-1 gap-4 mt-3">
                         {
-                            id === "34343" && (
-                                <div className="">
-                                    <textarea name="tweet" id="tweet" rows={5} placeholder="Write a tweet">
+                            id === loggedInUser._id && (
+                                <div className="space-y-1">
+                                    <textarea name="tweet" id="tweet" rows={4} placeholder="Write a tweet"
+                                        className="w-full mx-2 px-2 py-1 bg-transparent border outline-none rounded">
 
                                     </textarea>
-                                    <div className="flex justify-end items-center">
-                                        <MdOutlineEmojiEmotions />
-                                        <MdMoreHoriz />
-                                        <button className="hover:bg-purple-700 bg-purple-500 text-white px-4 py-2 rounded-md">
+                                    <div className="flex justify-end items-center space-x-4">
+                                        <MdOutlineEmojiEmotions className="text-2xl cursor-pointer" />
+                                        <MdMoreHoriz className="text-2xl cursor-pointer" />
+                                        <button className="hover:bg-purple-700 bg-purple-500 text-white px-6 py-2 rounded-md">
                                             Send
                                         </button>
                                     </div>
@@ -177,8 +258,8 @@ function ChannelTweets() {
                             )
                         }
                         {
-                            Array.from({ length: 6 }).map((_, idx) => (
-                                <TweetCard key={idx} />
+                            tweets.map((item, index) => (
+                                <TweetCard item={item} key={index} />
                             ))
                         }
                     </div>
@@ -213,12 +294,37 @@ function ChannelTweets() {
 
 function ChannelSubscribers() {
     const [subscribers, setSubscribers] = useState([]);
+    const { id } = useParams();
+
+    useEffect(() => {
+        axios.get(`${baseUrl}/subscriptions/c/${id}`, {
+            withCredentials: true,
+            headers: {
+                'Authorization': `Bearer ${Cookies.get('accessToken')}`
+            },
+        })
+            .then(response => {
+                console.log(response.data.data);
+                setSubscribers(response.data.data);
+            })
+            .catch(error => {
+                console.error(error);
+            })
+            .finally(() => {
+                // loading false
+            })
+    }, [])
 
     return (
         <>
             {
                 subscribers.length > 0 ?
-                    <div className="grid grid-cols-1 gap-4 mt-8">
+                    <div className="grid grid-cols-1 gap-4 mt-4 mx-24">
+                        <input
+                            type="text"
+                            placeholder="Search for a subscriber"
+                            className="w-full bg-gray-800 text-white p-3 rounded-md outline-none"
+                        />
                         {
                             Array.from({ length: 6 }).map((_, idx) => (
                                 <SubscriberCard key={idx} />
