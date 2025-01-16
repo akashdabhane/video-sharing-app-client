@@ -9,6 +9,7 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     axios.get(`${baseUrl}/users/current-user`, {
@@ -28,12 +29,12 @@ export const AuthProvider = ({ children }) => {
         console.log(error);
       })
       .finally(() => {
-        // loading false
+        setLoading(false);
       })
   }, [])
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, loggedInUser, setLoggedInUser }}>
+    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, loggedInUser, setLoggedInUser, loading }}>
       {children}
     </AuthContext.Provider>
   );

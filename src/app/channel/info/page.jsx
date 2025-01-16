@@ -6,6 +6,7 @@ import Sidebar from "@/components/Sidebar";
 import { baseUrl } from "@/utils/helper";
 import axios from "axios";
 import Cookies from "js-cookie";
+import ProtectedRoute from "@/utils/ProtectedRoute";
 
 export default function ChannelInfo() {
     const [channel, setChannel] = useState([]);
@@ -31,52 +32,54 @@ export default function ChannelInfo() {
     }, []);
 
     return (
-        <div className="min-h-screen bg-black text-white flex flex-col lg:flex-row">
+        <ProtectedRoute>
+            <div className="min-h-screen bg-black text-white flex flex-col lg:flex-row">
 
-            <div className="flex-1 ">
-                <Navbar />
-                <div className="min-h-screen bg-black text-white flex">
-                    <Sidebar />
-                    <div className="p-4 w-full">
-                        <ChannelCard channel={channel} />
+                <div className="flex-1 ">
+                    <Navbar />
+                    <div className="min-h-screen bg-black text-white flex">
+                        <Sidebar />
+                        <div className="p-4 w-full">
+                            <ChannelCard channel={channel} />
 
-                        {/* Tabs */}
-                        <nav className="flex border-b border-gray-700">
-                            {["Personal Information", "Channel Information", "Change Password"].map((label, index) => (
-                                <button
-                                    key={index}
-                                    onClick={() => setTab(label)}
-                                    className={`flex-grow py-2 text-center ${tab === label ? "border-b-2 border-purple-500" : "text-gray-400"
-                                        }`}
-                                >
-                                    {label}
-                                </button>
-                            ))}
-                        </nav>
+                            {/* Tabs */}
+                            <nav className="flex border-b border-gray-700">
+                                {["Personal Information", "Channel Information", "Change Password"].map((label, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => setTab(label)}
+                                        className={`flex-grow py-2 text-center ${tab === label ? "border-b-2 border-purple-500" : "text-gray-400"
+                                            }`}
+                                    >
+                                        {label}
+                                    </button>
+                                ))}
+                            </nav>
 
-                        {/* Forms */}
-                        {
-                            tab === "Personal Information" && <EditPersonalInfoForm
-                                name={channel?.fullName}
-                                email={channel?.email}
-                            />
-                        }
+                            {/* Forms */}
+                            {
+                                tab === "Personal Information" && <EditPersonalInfoForm
+                                    name={channel?.fullName}
+                                    email={channel?.email}
+                                />
+                            }
 
-                        {
-                            tab === "Channel Information" && <EditChannelInfoForm
-                                username={channel?.username}
-                                description={channel?.descripition}
-                            />
-                        }
+                            {
+                                tab === "Channel Information" && <EditChannelInfoForm
+                                    username={channel?.username}
+                                    description={channel?.descripition}
+                                />
+                            }
 
-                        {
-                            tab === "Change Password" && <ChangePasswordForm />
-                        }
+                            {
+                                tab === "Change Password" && <ChangePasswordForm />
+                            }
+                        </div>
                     </div>
                 </div>
-            </div>
 
-        </div>
+            </div>
+        </ProtectedRoute>
     );
 }
 

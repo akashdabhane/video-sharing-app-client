@@ -8,6 +8,7 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import { baseUrl } from "@/utils/helper";
 import UploadVideo from "@/popups/UploadVideoPopup";
+import ProtectedRoute from "@/utils/ProtectedRoute";
 
 const Dashboard = () => {
     const [isUploadModalOpen, setUploadModalOpen] = useState(false);
@@ -152,50 +153,52 @@ const VideoList = ({ videos }) => {
 
 
     return (
-        <div className="my-6 overflow-x-auto">
-            <table className="w-full table-auto border-collapse">
-                <thead>
-                    <tr className="bg-gray-700">
-                        <th className="py-2 px-4 text-left">Status</th>
-                        <th className="py-2 px-4 text-left">Title</th>
-                        <th className="py-2 px-4 text-left">Rating</th>
-                        <th className="py-2 px-4 text-left">Date Uploaded</th>
-                        <th className="py-2 px-4 text-left">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        videos.map((video) => (
-                            <tr key={video._id} className="border-t border-gray-600 hover:bg-gray-800">
-                                <td className="py-2 px-4">
-                                    <span
-                                        className={`inline-block px-3 py-1 text-sm rounded-md font-medium ${video?.isPublished
-                                            ? "bg-green-700 text-green-200"
-                                            : "bg-orange-700 text-orange-200"
-                                            }`}
-                                    >
-                                        {video?.isPublished ? 'published' : 'unpublished'}
-                                    </span>
-                                </td>
-                                <td className="py-2 px-4">{video.title}</td>
-                                <td className="py-2 px-4">
-                                    <span className="text-green-400 mr-2">{video?.likes} likes</span>
-                                    <span className="text-red-400">{video?.dislikes} dislikes</span>
-                                </td>
-                                <td className="py-2 px-4">{new Date(video.createdAt).getDate() + "/" + new Date(video.createdAt).getMonth() + "/" + new Date(video.createdAt).getFullYear()}</td>
-                                <td className="py-2 px-4 flex items-center gap-4">
-                                    <button className="text-gray-400 hover:text-white">
-                                        <FaEdit />
-                                    </button>
-                                    <button className="text-gray-400 hover:text-red-500">
-                                        <FaTrashAlt />
-                                    </button>
-                                </td>
-                            </tr>
-                        ))
-                    }
-                </tbody>
-            </table>
-        </div>
+        <ProtectedRoute>
+            <div className="my-6 overflow-x-auto">
+                <table className="w-full table-auto border-collapse">
+                    <thead>
+                        <tr className="bg-gray-700">
+                            <th className="py-2 px-4 text-left">Status</th>
+                            <th className="py-2 px-4 text-left">Title</th>
+                            <th className="py-2 px-4 text-left">Rating</th>
+                            <th className="py-2 px-4 text-left">Date Uploaded</th>
+                            <th className="py-2 px-4 text-left">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {
+                            videos.map((video) => (
+                                <tr key={video._id} className="border-t border-gray-600 hover:bg-gray-800">
+                                    <td className="py-2 px-4">
+                                        <span
+                                            className={`inline-block px-3 py-1 text-sm rounded-md font-medium ${video?.isPublished
+                                                ? "bg-green-700 text-green-200"
+                                                : "bg-orange-700 text-orange-200"
+                                                }`}
+                                        >
+                                            {video?.isPublished ? 'published' : 'unpublished'}
+                                        </span>
+                                    </td>
+                                    <td className="py-2 px-4">{video.title}</td>
+                                    <td className="py-2 px-4">
+                                        <span className="text-green-400 mr-2">{video?.likes} likes</span>
+                                        <span className="text-red-400">{video?.dislikes} dislikes</span>
+                                    </td>
+                                    <td className="py-2 px-4">{new Date(video.createdAt).getDate() + "/" + new Date(video.createdAt).getMonth() + "/" + new Date(video.createdAt).getFullYear()}</td>
+                                    <td className="py-2 px-4 flex items-center gap-4">
+                                        <button className="text-gray-400 hover:text-white">
+                                            <FaEdit />
+                                        </button>
+                                        <button className="text-gray-400 hover:text-red-500">
+                                            <FaTrashAlt />
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </ProtectedRoute>
     );
 };

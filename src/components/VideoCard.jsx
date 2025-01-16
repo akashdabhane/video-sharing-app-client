@@ -13,7 +13,7 @@ export default function VideoCard({ item }) {
         <div className="bg-gray-900 rounded-lg overflow-hidden shadow-lg cursor-pointer" onClick={() => router.push(`/watch/v/${item._id}`)}>
             <div className="relative w-full h-48">
                 <Image
-                    src={item.thumbnail}
+                    src={item?.thumbnail}
                     alt="Video Thumbnail"
                     // objectFit="cover"
                     // fill

@@ -10,6 +10,7 @@ import Cookies from 'js-cookie';
 import Image from 'next/image';
 import Banner from "@/images/banner.png";
 import { AiOutlineLike, AiOutlineDislike } from "react-icons/ai";
+import ProtectedRoute from '@/utils/ProtectedRoute';
 
 export default function WatchVideo() {
     const [video, setVideo] = useState({});
@@ -57,73 +58,79 @@ export default function WatchVideo() {
     }, [video]);
 
     return (
-        <div className="flex-1 ">
-            <Navbar />
-            <div className="h-screen w-full bg-black text-white flex ">
-                <Sidebar />
-                <div className="p-4 flex flex-col md:flex-row w-full">
-                    <div className="w-full mt-4 md:mx-2">
-                        <video className='border ' width={1000} height={1000} poster='https://bitmovin.com/wp-content/uploads/2021/03/BLOG-POST_HTML5-Video-1024x537.png' autoPlay controls>
-                            <source
-                                src="http://thinkingform.com/wp-content/uploads/2017/09/video-sample-mp4.mp4?_=1"
-                                type="video/mp4"
-
-                            />
-                            Your browser does not support the video tag.
-                        </video>
-
-                        {/* video details  */}
-                        <div className="bg-gray-900 text-white p-4 rounded-md shadow-md mt-4">
-                            <div className="flex justify-between items-start">
-                                <div className="">
-                                    <h1 className="text-2xl font-bold">{video?.title}</h1>
-                                    <p className="text-gray-400 text-sm mt-1">
-                                        {video?.views} Views • {formatTimeAgo(video?.createdAt)}
-                                    </p>
-                                </div>
-                                {/* Like, Dislike, and Save */}
-                                <div className="flex items-center gap-4">
-                                    <button className="flex items-center gap-1 text-gray-400 hover:text-white">
-                                        <AiOutlineLike /> 3050
-                                    </button>
-                                    <button className="flex items-center gap-1 text-gray-400 hover:text-white">
-                                        <AiOutlineDislike /> 20
-                                    </button>
-                                    <button className="ml-auto bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-600">
-                                        Save
-                                    </button>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-3 mt-4">
-                                <Image
-                                    src={Banner}
-                                    alt="React Patterns"
-                                    className="w-12 h-12 rounded-full"
-                                />
-                                <div>
-                                    <h2 className="font-semibold">{video?.owner?.fullName}</h2>
-                                    <p className="text-gray-400 text-sm">757K Subscribers</p>
-                                </div>
-                                <button className="ml-auto bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
-                                    Subscribe
-                                </button>
-                            </div>
-                            <p className="text-gray-300 mt-4 line-clamp-1">
-                                {video?.description}
-                            </p>
-                        </div>
-                        <CommentsSection />
-                    </div>
-                    <div className="grid grid-cols-1 gap-4 mt-4 w-[60%]">
+        <ProtectedRoute>
+            <div className="flex-1 ">
+                <Navbar />
+                <div className="h-screen w-full bg-black text-white flex ">
+                    <Sidebar />
+                    <div className="p-4 flex flex-col md:flex-row w-full">
                         {
-                            suggestedVideos.map(video => (
-                                <VideoCardListView key={video._id} video={video} />
-                            ))
+                            Object.keys(video).length > 0 && (
+                                <div className="w-full mt-4 md:mx-2">
+                                    <video className='border w-full h-[30rem]' width={1000} height={1000} poster={video?.thumbnail} autoPlay controls>
+                                        <source
+                                            src={video?.videoFile}
+                                            type="video/mp4"
+                                        />
+                                        Your browser does not support the video tag.
+                                    </video>
+
+                                    {/* video details  */}
+                                    <div className="bg-gray-900 text-white p-4 rounded-md shadow-md mt-4">
+                                        <div className="flex justify-between items-start">
+                                            <div className="">
+                                                <h1 className="text-2xl font-bold">{video?.title}</h1>
+                                                <p className="text-gray-400 text-sm mt-1">
+                                                    {video?.views} Views • {formatTimeAgo(video?.createdAt)}
+                                                </p>
+                                            </div>
+                                            {/* Like, Dislike, and Save */}
+                                            <div className="flex items-center gap-4">
+                                                <button className="flex items-center gap-1 text-gray-400 hover:text-white">
+                                                    <AiOutlineLike /> 3050
+                                                </button>
+                                                <button className="flex items-center gap-1 text-gray-400 hover:text-white">
+                                                    <AiOutlineDislike /> 20
+                                                </button>
+                                                <button className="ml-auto bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-600">
+                                                    Save
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-3 mt-4">
+                                            <Image
+                                                src={Banner}
+                                                alt="React Patterns"
+                                                className="w-12 h-12 rounded-full"
+                                            />
+                                            <div>
+                                                <h2 className="font-semibold">{video?.owner?.fullName}</h2>
+                                                <p className="text-gray-400 text-sm">757K Subscribers</p>
+                                            </div>
+                                            <button className="ml-auto bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+                                                Subscribe
+                                            </button>
+                                        </div>
+                                        <p className="text-gray-300 mt-4 line-clamp-1">
+                                            {video?.description}
+                                        </p>
+                                    </div>
+                                    <CommentsSection />
+                                </div>
+                            )
                         }
+
+                        <div className="grid grid-cols-1 gap-4 mt-4 w-[60%]">
+                            {
+                                suggestedVideos.map(video => (
+                                    <VideoCardListView key={video._id} video={video} />
+                                ))
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </ProtectedRoute>
     );
 }
 

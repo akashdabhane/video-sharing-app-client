@@ -7,6 +7,7 @@ import VideoCardListView from '@/components/VideoCardListView';
 import axios from 'axios';
 import { baseUrl } from '@/utils/helper';
 import Cookies from 'js-cookie';
+import ProtectedRoute from '@/utils/ProtectedRoute';
 
 function LikedVideosPage() {
     const [likedVideos, setLikedvideos] = useState([]);
@@ -33,31 +34,33 @@ function LikedVideosPage() {
 
 
     return (
-        <div className="flex-1 ">
-            <Navbar />
-            <div className="min-h-screen bg-black text-white flex">
-                <Sidebar />
-                <div className="p-2 md:p-4 w-full flex flex-col md:flex-row">
-                    <>
-                        <PlaylistCard />
+        <ProtectedRoute>
+            <div className="flex-1 ">
+                <Navbar />
+                <div className="min-h-screen bg-black text-white flex">
+                    <Sidebar />
+                    <div className="p-2 md:p-4 w-full flex flex-col md:flex-row">
+                        <>
+                            <PlaylistCard />
 
-                    </>
-                    <div className="grid grid-cols-1 gap-3 md:gap-4 mt-4 w-full">
-                        {
-                            likedVideos.length > 0
-                                ?
-                                likedVideos.map(video => (
-                                    <VideoCardListView cross={true} key={video._id} video={video} />
-                                ))
-                                :
-                                <div className='text-white text-center my-40'>
-                                    <h2>No Liked Videos</h2>
-                                </div>
-                        }
+                        </>
+                        <div className="grid grid-cols-1 gap-3 md:gap-4 mt-4 w-full">
+                            {
+                                likedVideos.length > 0
+                                    ?
+                                    likedVideos.map(video => (
+                                        <VideoCardListView cross={true} key={video._id} video={video} />
+                                    ))
+                                    :
+                                    <div className='text-white text-center my-40'>
+                                        <h2>No Liked Videos</h2>
+                                    </div>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </ProtectedRoute>
     )
 }
 

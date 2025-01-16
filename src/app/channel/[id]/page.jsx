@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 import Navbar from "@/components/Navbar";
 import VideoCard from "@/components/VideoCard";
@@ -14,12 +14,14 @@ import { baseUrl } from "@/utils/helper";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useAuth } from "@/contexts/AuthContext";
-
+import ProtectedRoute from "@/utils/ProtectedRoute";
 
 export default function ChannelPage() {
     const [channel, setChannel] = useState([]);
-    const [nav, setNav] = useState(0);
     const { id } = useParams();
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const tab = searchParams.get("query");
 
     useEffect(() => {
         axios.get(`${baseUrl}/users/channel/${id}`, {
@@ -44,58 +46,63 @@ export default function ChannelPage() {
         {
             id: 0,
             title: "Videos",
+            query: `/channel/${id}?query=videos`
         },
         {
             id: 1,
-            title: "Playlist",
+            title: "Playlists",
+            query: `/channel/${id}?query=playlists`
         },
         {
             id: 2,
             title: "Tweets",
+            query: `/channel/${id}?query=tweets`
         },
         {
             id: 3,
             title: "Subscribed",
+            query: `/channel/${id}?query=subscribed`
         },
-
     ]
 
     return (
-        <div className="flex-1 ">
-            <Navbar />
-            <div className="min-h-screen bg-black text-white flex">
-                <Sidebar />
-                <div className="p-4 w-full">
-                    <ChannelCard channel={channel} />
-                    <div className="mt-6 border-b border-gray-700 ">
-                        <ul className="grid grid-cols-4 text-center">
-                            {
-                                menu.map((item) => (
-                                    <li className={`pb-2 border-b-2 cursor-pointer ${nav === item.id ? "border-purple-500" : "text-gray-400"} `}
-                                        key={item.id}
-                                        onClick={() => setNav(item.id)}
-                                    >
-                                        {item.title}
-                                    </li>
-                                ))
-                            }
-                        </ul>
+        <ProtectedRoute>
+            <div className="flex-1 ">
+                <Navbar />
+                <div className="min-h-screen bg-black text-white flex">
+                    <Sidebar />
+                    <div className="p-4 w-full">
+                        <ChannelCard channel={channel} />
+                        <div className="mt-6 border-b border-gray-700 ">
+                            <ul className="grid grid-cols-4 text-center">
+                                {
+                                    menu.map((item) => (
+                                        <li className={`pb-2 border-b-2 cursor-pointer ${tab === item.title.toLowerCase() ? "border-purple-500" : "text-gray-400"} `}
+                                            key={item.id}
+                                            onClick={() => router.push(item.query)}
+                                        >
+                                            {item.title}
+                                        </li>
+                                    ))
+                                }
+                            </ul>
+                        </div>
+                        {
+                            (tab === 'videos' || !tab) && <ChannelVideos />
+                        }
+                        {
+                            tab === 'playlists' && <ChannelPlayLists />
+                        }
+                        {
+                            tab === 'tweets' && <ChannelTweets />
+                        }
+                        {
+                            tab === 'subscribed' && <ChannelSubscribers />
+                        }
                     </div>
-                    {
-                        nav === 0 && <ChannelVideos />
-                    }
-                    {
-                        nav === 1 && <ChannelPlayLists />
-                    }
-                    {
-                        nav === 2 && <ChannelTweets />
-                    }
-                    {
-                        nav === 3 && <ChannelSubscribers />
-                    }
                 </div>
             </div>
-        </div>
+        </ProtectedRoute>
     );
 }
 
