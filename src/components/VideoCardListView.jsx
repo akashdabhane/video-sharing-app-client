@@ -3,6 +3,7 @@ import React from 'react';
 import Image from 'next/image';
 import Banner from '../images/banner.png';
 import { useRouter } from 'next/navigation';
+import { formatTimeAgo } from '@/utils/helper';
 
 function VideoCardListView({ video, cross }) {
     const router = useRouter();
@@ -20,13 +21,13 @@ function VideoCardListView({ video, cross }) {
                         height={1000}
                     />
                     <span className="absolute bottom-2 right-2 bg-black bg-opacity-75 px-2 py-1 text-sm rounded text-white">
-                        20:45
+                        {video?.duration}
                     </span>
                 </div>
                 <div className="p-4">
                     <h3 className="text-lg font-semibold">{video?.title}</h3>
-                    <p className="text-sm text-gray-400">10.3k Views • 44 minutes ago</p>
-                    <p className="text-sm text-gray-400">Code Master</p>
+                    <p className="text-sm text-gray-400">{video?.views} Views • {formatTimeAgo(video?.createdAt)}</p>
+                    <p className="text-sm text-gray-400">{video?.owner?.fullName}</p>
                 </div>
             </div>
         </div>

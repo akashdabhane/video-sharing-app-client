@@ -92,14 +92,14 @@ function ChannelCard({channel}) {
                     <input
                         type='text'
                         placeholder='your name'
-                        value={channel?.fullName}
+                        value={channel?.fullName || ""}
                         className="text-lg md:text-xl font-bold bg-transparent border-none outline-none"
                         disabled={editChannelInfo ? false : true}
                     />
                     <input
                         type='text'
                         placeholder='username'
-                        value={"@" + channel?.username}
+                        value={("@" + channel?.username) || ""}
                         className="text-sm text-gray-400 bg-transparent border-none outline-none"
                         disabled={editChannelInfo ? false : true}
                     />

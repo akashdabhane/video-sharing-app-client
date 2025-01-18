@@ -275,6 +275,34 @@ const CommentsSection = () => {
             });
     }
 
+    const handleOnCommentToggleLikeClick = (commentObj) => {
+        axios.post(`${baseUrl}/likes/toggle/c/${commentObj._id}`, {}, {
+            withCredentials: true,
+            headers: {
+                'Authorization': `Bearer ${Cookies.get('accessToken')}`
+            },
+        })
+            .then(response => {
+                console.log(response.data);
+                
+                // Update the specific comment in the comments state
+                setComments(prevComments =>
+                    prevComments.map(comment =>
+                        comment._id === commentObj._id
+                            ? {
+                                ...comment,
+                                isLiked: !comment.isLiked,
+                                totalLikes: comment.isLiked ? comment.totalLikes - 1 : comment.totalLikes + 1,
+                            }
+                            : comment
+                    )
+                );
+            })
+            .catch(error => {
+                console.error(error);
+            })
+    }
+
     return (
         <div className="bg-gray-900 text-white p-4 rounded-md mt-4">
             <h2 className="text-xl font-bold">{comments?.length} {comments?.length === 1 ? "Comment" : "Comments"}</h2>
@@ -304,15 +332,15 @@ const CommentsSection = () => {
                         <div className='py-4 border-b border-gray-700 flex justify-between' key={index}>
                             <div className="flex items-start gap-3 w-[92%]">
                                 <Image
-                                    src={comment?.owner?.avatar}
-                                    alt={comment?.owner?.fullName}
+                                    src={comment?.owner[0]?.avatar}
+                                    alt={comment?.owner[0]?.fullName}
                                     className="w-10 h-10 rounded-full"
                                     width={1000}
                                     height={1000}
                                 />
                                 <div className='w-full'>
-                                    <h3 className="font-semibold text-white">{comment?.owner?.fullName}</h3>
-                                    <p className="text-gray-400 text-xs">@{comment?.owner?.username} • {formatTimeAgo(comment?.createdAt)}</p>
+                                    <h3 className="font-semibold text-white">{comment?.owner[0]?.fullName}</h3>
+                                    <p className="text-gray-400 text-xs">@{comment?.owner[0]?.username} • {formatTimeAgo(comment?.createdAt)}</p>
                                     {
                                         editComment.commentId === comment._id
                                             ?
@@ -339,12 +367,22 @@ const CommentsSection = () => {
                                                 </div>
                                             </div>
                                             :
-                                            <p className="text-gray-300 mt-2">{comment?.content}</p>
+                                            <p className="text-gray-300 mt-1">{comment?.content}</p>
                                     }
+
+                                    <div className="flex items-center space-x-1 my-1">
+                                        <AiOutlineLike
+                                            className={`${comment?.isLiked ? "text-purple-400" : "text-gray-400"} cursor-pointer text-lg`}
+                                            onClick={() => handleOnCommentToggleLikeClick(comment)}
+                                        />
+                                        <span className='text-xs '>
+                                            {comment?.totalLikes}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                             {
-                                loggedInUser._id === comment?.owner?._id &&
+                                loggedInUser._id === comment?.owner[0]?._id &&
                                 <div className="space-x-2">
                                     <button className="text-gray-400 hover:text-white">
                                         <FaEdit onClick={() => setEditComment({ commentId: comment._id, updatedComment: comment?.content })} />

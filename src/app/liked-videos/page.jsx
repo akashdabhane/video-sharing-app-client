@@ -49,7 +49,7 @@ function LikedVideosPage() {
                                 likedVideos.length > 0
                                     ?
                                     likedVideos.map(video => (
-                                        <VideoCardListView cross={true} key={video._id} video={video} />
+                                        <VideoCardListView cross={true} key={video._id} video={video?.video} />
                                     ))
                                     :
                                     <div className='text-white text-center my-40'>

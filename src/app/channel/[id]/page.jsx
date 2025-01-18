@@ -263,8 +263,8 @@ function ChannelTweets() {
                             )
                         }
                         {
-                            tweets.map((item, index) => (
-                                <TweetCard item={item} key={index} />
+                            tweets.map((tweet, index) => (
+                                <TweetCard tweet={tweet} setTweets={setTweets} key={index} />
                             ))
                         }
                     </div>

@@ -162,7 +162,7 @@ function EditPersonalInfoForm({ name, email }) {
                             name="name"
                             className="w-full bg-gray-800 border border-gray-700 rounded-md px-3 py-2"
                             placeholder="your name"
-                            value={formData.name}
+                            value={formData.name || ""}
                             onChange={handleInputChange}
                             disabled={updatePersonalInfo ? false : true}
                         />
@@ -176,7 +176,7 @@ function EditPersonalInfoForm({ name, email }) {
                         name="email"
                         className="w-full bg-gray-800 border border-gray-700 rounded-md px-3 py-2"
                         placeholder="example@gmail.com"
-                        value={formData.email}
+                        value={formData.email || ""}
                         onChange={handleInputChange}
                         disabled={updatePersonalInfo ? false : true}
                     />
@@ -268,7 +268,7 @@ function EditChannelInfoForm({ username, description }) {
                             name="username"
                             className="flex-grow bg-transparent py-2"
                             placeholder="reactpatterns"
-                            value={formData.username}
+                            value={formData.username || ""}
                             onChange={handleInputChange}
                             disabled={updateChannelInfo ? false : true}
                         />
@@ -382,7 +382,7 @@ function ChangePasswordForm() {
                         name="oldPassword"
                         id="oldPassword"
                         className="w-full bg-gray-800 border border-gray-700 rounded-md px-3 py-2"
-                        value={formData.oldPassword}
+                        value={formData.oldPassword || ""}
                         onChange={handleInputChange}
                     />
                 </div>
@@ -394,7 +394,7 @@ function ChangePasswordForm() {
                         id="newPassword"
                         className="w-full bg-gray-800 border border-gray-700 rounded-md px-3 py-2"
                         placeholder="Your new password must be more than 8 characters."
-                        value={formData.newPassword}
+                        value={formData.newPassword || ""}
                         onChange={handleInputChange}
                         minLength={8}
                         required
@@ -407,7 +407,7 @@ function ChangePasswordForm() {
                         name="confirmPassword"
                         id="confirmPassword"
                         className="w-full bg-gray-800 border border-gray-700 rounded-md px-3 py-2"
-                        value={formData.confirmPassword}
+                        value={formData.confirmPassword || ""}
                         onChange={handleInputChange}
                     />
                 </div>
