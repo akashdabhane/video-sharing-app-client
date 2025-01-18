@@ -9,6 +9,7 @@ import axios from "axios";
 import { baseUrl } from "@/utils/helper";
 import UploadVideo from "@/popups/UploadVideoPopup";
 import ProtectedRoute from "@/utils/ProtectedRoute";
+import DeleteVideoModal from "@/popups/DeleteVideoPopup";
 
 const Dashboard = () => {
     const [isUploadModalOpen, setUploadModalOpen] = useState(false);
@@ -108,53 +109,37 @@ const Card = ({ icon, label, value }) => {
 
 
 const VideoList = ({ videos }) => {
-    // const videos = [
-    //     {
-    //         id: 1,
-    //         title: "JavaScript Fundamentals: Variables and Data Types",
-    //         status: "Published",
-    //         likes: 921,
-    //         dislikes: 49,
-    //         date: "9/22/2023",
-    //     },
-    //     {
-    //         id: 2,
-    //         title: "React Hooks Explained: useState and useEffect",
-    //         status: "Unpublished",
-    //         likes: 2520,
-    //         dislikes: 279,
-    //         date: "9/21/2023",
-    //     },
-    //     {
-    //         id: 3,
-    //         title: "Mastering Async Await in JavaScript",
-    //         status: "Unpublished",
-    //         likes: 943,
-    //         dislikes: 244,
-    //         date: "9/20/2023",
-    //     },
-    //     {
-    //         id: 4,
-    //         title: "JavaScript Fundamentals: Variables and Data Types",
-    //         status: "Published",
-    //         likes: 921,
-    //         dislikes: 49,
-    //         date: "9/22/2023",
-    //     },
-    //     {
-    //         id: 5,
-    //         title: "React Hooks Explained: useState and useEffect",
-    //         status: "Unpublished",
-    //         likes: 2520,
-    //         dislikes: 279,
-    //         date: "9/21/2023",
-    //     },
-    // ];
+    const [video, setVideos] = useState({
+        deleteVideo: false,
+        videoId: null,
+    });
+
+    const handleDeleteVideo = () => {
+        axios.delete(`${baseUrl}/videos/${video.videoId}`, {
+            withCredentials: true,
+            headers: {
+                'Authorization': `Bearer ${Cookies.get('accessToken')}`
+            },
+        })
+        .then((response) => {
+            console.log(response.data);
+        })
+        .catch((error) => {
+            console.error(error);
+        })
+    }
 
 
     return (
         <ProtectedRoute>
-            <div className="my-6 overflow-x-auto">
+            <div className="my-6 z-30">
+                {
+                    video.deleteVideo === true && <DeleteVideoModal
+                        isOpen={true}
+                        onClose={() => setVideos({ deleteVideo: false })}
+                        onDelete={handleDeleteVideo}
+                    />
+                }
                 <table className="w-full table-auto border-collapse">
                     <thead>
                         <tr className="bg-gray-700">
@@ -190,7 +175,7 @@ const VideoList = ({ videos }) => {
                                             <FaEdit />
                                         </button>
                                         <button className="text-gray-400 hover:text-red-500">
-                                            <FaTrashAlt />
+                                            <FaTrashAlt onClick={() => setVideos({ deleteVideo: true, videoId: video._id })} />
                                         </button>
                                     </td>
                                 </tr>

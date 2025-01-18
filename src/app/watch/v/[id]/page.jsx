@@ -3,7 +3,7 @@ import Sidebar from '@/components/Sidebar';
 import Navbar from '@/components/Navbar';
 import VideoCardListView from '@/components/VideoCardListView';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { baseUrl, formatTimeAgo } from '@/utils/helper';
 import Cookies from 'js-cookie';
@@ -11,10 +11,14 @@ import Image from 'next/image';
 import Banner from "@/images/banner.png";
 import { AiOutlineLike, AiOutlineDislike } from "react-icons/ai";
 import ProtectedRoute from '@/utils/ProtectedRoute';
+import { toast } from 'react-toastify';
+import { useAuth } from '@/contexts/AuthContext';
+import { FaTrashAlt, FaEdit } from "react-icons/fa";
 
 export default function WatchVideo() {
     const [video, setVideo] = useState({});
     const [suggestedVideos, setSuggestedVideos] = useState([]);
+    const [showDescription, setShowDescription] = useState(false);
     const { id } = useParams();
 
     useEffect(() => {
@@ -25,8 +29,8 @@ export default function WatchVideo() {
             },
         })
             .then(response => {
-                console.log(response.data.data);
-                setVideo(response.data.data);
+                console.log(response.data.data[0]);
+                setVideo(response.data.data[0]);
             })
             .catch(error => {
                 console.error(error);
@@ -38,7 +42,7 @@ export default function WatchVideo() {
 
     useEffect(() => {
         if (Object.keys(video).length > 0) {
-            axios.get(`${baseUrl}/videos/channel/${video?.owner?._id}`, {
+            axios.get(`${baseUrl}/videos/channel/${video?.owner[0]?._id}`, {
                 withCredentials: true,
                 headers: {
                     'Authorization': `Bearer ${Cookies.get('accessToken')}`
@@ -56,6 +60,26 @@ export default function WatchVideo() {
                 })
         }
     }, [video]);
+
+    const handleOnLikeClick = () => {
+        axios.post(`${baseUrl}/likes/toggle/v/${id}`, {}, {
+            withCredentials: true,
+            headers: {
+                'Authorization': `Bearer ${Cookies.get('accessToken')}`
+            },
+        })
+            .then(response => {
+                console.log(response.data);
+                setVideo({
+                    ...video,
+                    totalLikes: video.isLiked === true ? video.totalLikes - 1 : video.totalLikes + 1,
+                    isLiked: video.isLiked === true ? false : true,
+                });
+            })
+            .catch(error => {
+                console.error(error);
+            })
+    }
 
     return (
         <ProtectedRoute>
@@ -85,13 +109,17 @@ export default function WatchVideo() {
                                                 </p>
                                             </div>
                                             {/* Like, Dislike, and Save */}
-                                            <div className="flex items-center gap-4">
-                                                <button className="flex items-center gap-1 text-gray-400 hover:text-white">
-                                                    <AiOutlineLike /> 3050
+                                            <div className="flex items-center gap-8">
+                                                <button className={`flex items-center gap-1 text-gray-400 hover:text-white`}>
+                                                    <AiOutlineLike
+                                                        className={`${video?.isLiked ? "text-purple-400" : "text-gray-400"} text-xl`}
+                                                        onClick={handleOnLikeClick}
+                                                    />
+                                                    {video?.totalLikes}
                                                 </button>
-                                                <button className="flex items-center gap-1 text-gray-400 hover:text-white">
+                                                {/* <button className="flex items-center gap-1 text-gray-400 hover:text-white">
                                                     <AiOutlineDislike /> 20
-                                                </button>
+                                                </button> */}
                                                 <button className="ml-auto bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-600">
                                                     Save
                                                 </button>
@@ -99,20 +127,30 @@ export default function WatchVideo() {
                                         </div>
                                         <div className="flex items-center gap-3 mt-4">
                                             <Image
-                                                src={Banner}
+                                                src={video?.owner[0]?.avatar}
                                                 alt="React Patterns"
                                                 className="w-12 h-12 rounded-full"
+                                                width={1000}
+                                                height={1000}
                                             />
                                             <div>
-                                                <h2 className="font-semibold">{video?.owner?.fullName}</h2>
-                                                <p className="text-gray-400 text-sm">757K Subscribers</p>
+                                                <h2 className="font-semibold">{video?.owner[0]?.fullName}</h2>
+                                                <p className="text-gray-400 text-sm">{video?.totalSubscribers} {video?.totalSubscribers > 1 ? "Subscribers" : "Subscriber"} </p>
                                             </div>
-                                            <button className="ml-auto bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
-                                                Subscribe
-                                            </button>
+                                            {
+                                                video?.isSubscribed ?
+                                                    <button className="ml-auto bg-gray-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+                                                        Subscribed
+                                                    </button>
+                                                    :
+                                                    <button className="ml-auto bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+                                                        Subscribe
+                                                    </button>
+                                            }
                                         </div>
-                                        <p className="text-gray-300 mt-4 line-clamp-1">
+                                        <p className={`text-gray-300 mt-4 cursor-pointer ${!showDescription && 'line-clamp-1'}`} onClick={() => setShowDescription(!showDescription)}>
                                             {video?.description}
+                                            <span className='text-blue-600 mx-1' onClick={() => setShowDescription(false)}>hide</span>
                                         </p>
                                     </div>
                                     <CommentsSection />
@@ -137,7 +175,11 @@ export default function WatchVideo() {
 
 const CommentsSection = () => {
     const [comments, setComments] = useState([]);
+    const [inputFocus, setInputFocus] = useState(false);
+    const [comment, setComment] = useState("");
+    const [editComment, setEditComment] = useState({ commentId: null, updatedComment: "" });
     const { id } = useParams();
+    const { loggedInUser } = useAuth();
 
     useEffect(() => {
         axios.get(`${baseUrl}/comments/${id}`, {
@@ -158,32 +200,160 @@ const CommentsSection = () => {
             })
     }, []);
 
+
+    const handleAddCommentClick = () => {
+        if (comment.length > 0) {
+            axios.post(`${baseUrl}/comments/${id}`, { content: comment }, {
+                withCredentials: true,
+                headers: {
+                    'Authorization': `Bearer ${Cookies.get('accessToken')}`
+                },
+            })
+                .then(response => {
+                    const updatedData = {
+                        ...response.data.data,
+                        owner: {
+                            ...response.data.data.owner,
+                            fullName: loggedInUser.fullName,
+                            avatar: loggedInUser.avatar,
+                            username: loggedInUser.username,
+                            _id: loggedInUser._id,
+                        },
+                    };
+
+                    setComments([...comments, updatedData]);
+                    setComment("");
+                })
+                .catch(error => {
+                    console.error(error);
+                })
+        } else {
+            toast.error('Please enter a comment.', {
+                theme: "dark"
+            });
+        }
+    }
+
+    const handleDeleteCommentClick = (commentId) => {
+        axios.delete(`${baseUrl}/comments/channel/${commentId}`, {
+            withCredentials: true,
+            headers: {
+                'Authorization': `Bearer ${Cookies.get('accessToken')}`
+            },
+        })
+            .then((response) => {
+                console.log(response.data);
+                setComments(comments.filter(c => c._id !== commentId));
+                toast.success('Comment deleted successfully.', {
+                    theme: "dark"
+                });
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    }
+
+    const handleUpdateCommentClick = () => {
+        console.log(editComment);
+
+        axios.patch(`${baseUrl}/comments/channel/${editComment.commentId}`, { content: editComment.updatedComment }, {
+            withCredentials: true,
+            headers: {
+                'Authorization': `Bearer ${Cookies.get('accessToken')}`
+            },
+        })
+            .then((response) => {
+                const updatedComments = comments.map(c => (c._id === editComment.commentId ? { ...c, content: editComment.updatedComment } : c));
+                setComments(updatedComments);
+                setEditComment({ commentId: null, updatedComment: "" });
+                toast.success('Comment updated successfully.', {
+                    theme: "dark"
+                });
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    }
+
     return (
         <div className="bg-gray-900 text-white p-4 rounded-md mt-4">
             <h2 className="text-xl font-bold">{comments?.length} {comments?.length === 1 ? "Comment" : "Comments"}</h2>
-            <div className="mt-4">
+            <div className="mt-4 flex flex-col">
                 <input
                     type="text"
                     placeholder="Add a Comment"
                     className="w-full bg-gray-800 text-white p-3 rounded-md outline-none"
+                    onFocus={() => setInputFocus(true)}
+                    // onBlur={() => setInputFocus(false)}
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
                 />
+                <div className={`${inputFocus ? " " : "hidden"} text-end space-x-2 m-2 text-sm`}>
+                    <button className='bg-transparent border text-white px-3 py-1 rounded hover:bg-gray-700'>Cancel</button>
+                    <button
+                        className={`bg-purple-600 text-white px-3 py-1 rounded hover:bg-purple-700`}
+                        onClick={handleAddCommentClick}
+                    >
+                        Comment
+                    </button>
+                </div>
             </div>
             <div className="mt-6">
                 {
                     comments.map((comment, index) => (
-                        <div className="flex items-start gap-3 py-4 border-b border-gray-700" key={index}>
-                            <Image
-                                src={comment?.owner?.avatar}
-                                alt={comment?.owner?.fullName}
-                                className="w-10 h-10 rounded-full"
-                                width={1000}
-                                height={1000}
-                            />
-                            <div>
-                                <h3 className="font-semibold text-white">{comment?.owner?.fullName}</h3>
-                                <p className="text-gray-400 text-xs">@{comment?.owner?.username} • {formatTimeAgo(comment?.createdAt)}</p>
-                                <p className="text-gray-300 mt-2">{comment?.content}</p>
+                        <div className='py-4 border-b border-gray-700 flex justify-between' key={index}>
+                            <div className="flex items-start gap-3 w-[92%]">
+                                <Image
+                                    src={comment?.owner?.avatar}
+                                    alt={comment?.owner?.fullName}
+                                    className="w-10 h-10 rounded-full"
+                                    width={1000}
+                                    height={1000}
+                                />
+                                <div className='w-full'>
+                                    <h3 className="font-semibold text-white">{comment?.owner?.fullName}</h3>
+                                    <p className="text-gray-400 text-xs">@{comment?.owner?.username} • {formatTimeAgo(comment?.createdAt)}</p>
+                                    {
+                                        editComment.commentId === comment._id
+                                            ?
+                                            <div className="border">
+                                                <textarea
+                                                    type="text"
+                                                    className='text-gray-300 bg-transparent outline-none rounded p-2 w-full'
+                                                    defaultValue={comment?.content}
+                                                    onChange={(e) => setEditComment({ ...editComment, updatedComment: e.target.value })}
+                                                />
+                                                <div className="space-x-2 text-sm flex justify-end m-1">
+                                                    <button
+                                                        className='bg-transparent border text-white px-3 py-1 rounded hover:bg-gray-700'
+                                                        onClick={() => setEditComment({ commentId: null })}
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                    <button
+                                                        className={`bg-purple-600 text-white px-3 py-1 rounded hover:bg-purple-700`}
+                                                        onClick={() => editComment?.updatedComment !== comment?.content && handleUpdateCommentClick()}
+                                                    >
+                                                        Save
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            :
+                                            <p className="text-gray-300 mt-2">{comment?.content}</p>
+                                    }
+                                </div>
                             </div>
+                            {
+                                loggedInUser._id === comment?.owner?._id &&
+                                <div className="space-x-2">
+                                    <button className="text-gray-400 hover:text-white">
+                                        <FaEdit onClick={() => setEditComment({ commentId: comment._id, updatedComment: comment?.content })} />
+                                    </button>
+                                    <button className="text-gray-400 hover:text-red-500">
+                                        <FaTrashAlt onClick={() => handleDeleteCommentClick(comment._id)} />
+                                    </button>
+                                </div>
+                            }
                         </div>
                     ))
                 }

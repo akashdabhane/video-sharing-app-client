@@ -28,7 +28,7 @@ function Sidebar() {
         },
         {
             title: 'My Content',
-            link: `/channel/${loggedInUser?._id}?query=videos`,
+            link: `/channel/${loggedInUser?._id}?tab=videos`,
             icon: <FaVideo className='text-xl' />,
         },
         {

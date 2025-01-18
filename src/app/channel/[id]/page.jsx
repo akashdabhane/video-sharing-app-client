@@ -21,7 +21,7 @@ export default function ChannelPage() {
     const { id } = useParams();
     const router = useRouter();
     const searchParams = useSearchParams();
-    const tab = searchParams.get("query");
+    const tab = searchParams.get("tab");
 
     useEffect(() => {
         axios.get(`${baseUrl}/users/channel/${id}`, {
@@ -31,7 +31,6 @@ export default function ChannelPage() {
             },
         })
             .then(response => {
-                console.log(response.data.data[0]);
                 setChannel(response.data.data[0]);
             })
             .catch(error => {
@@ -46,22 +45,22 @@ export default function ChannelPage() {
         {
             id: 0,
             title: "Videos",
-            query: `/channel/${id}?query=videos`
+            link: `/channel/${id}?tab=videos`
         },
         {
             id: 1,
             title: "Playlists",
-            query: `/channel/${id}?query=playlists`
+            link: `/channel/${id}?tab=playlists`
         },
         {
             id: 2,
             title: "Tweets",
-            query: `/channel/${id}?query=tweets`
+            link: `/channel/${id}?tab=tweets`
         },
         {
             id: 3,
             title: "Subscribed",
-            query: `/channel/${id}?query=subscribed`
+            link: `/channel/${id}?tab=subscribed`
         },
     ]
 
@@ -79,7 +78,7 @@ export default function ChannelPage() {
                                     menu.map((item) => (
                                         <li className={`pb-2 border-b-2 cursor-pointer ${tab === item.title.toLowerCase() ? "border-purple-500" : "text-gray-400"} `}
                                             key={item.id}
-                                            onClick={() => router.push(item.query)}
+                                            onClick={() => router.push(item.link)}
                                         >
                                             {item.title}
                                         </li>
@@ -119,7 +118,6 @@ function ChannelVideos() {
             },
         })
             .then(response => {
-                console.log(response.data.data);
                 setVideos(response.data.data);
             })
             .catch(error => {

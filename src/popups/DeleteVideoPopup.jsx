@@ -1,3 +1,4 @@
+'use client';
 import React from "react";
 import { FiTrash2, FiX } from "react-icons/fi";
 
@@ -5,8 +6,8 @@ const DeleteVideoModal = ({ isOpen, onClose, onDelete }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="relative w-11/12 max-w-md bg-black text-white rounded-lg shadow-lg">
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-20 bg-black/50 backdrop-blur-sm">
+            <div className="relative w-11/12 max-w-md bg-black text-white rounded-lg shadow-lg p-6">
                 {/* Close Button */}
                 <button
                     onClick={onClose}

@@ -15,9 +15,9 @@ function VideoCardListView({ video, cross }) {
                     <Image
                         src={video?.thumbnail}
                         alt="Video Thumbnail"
-                        layout="fill"
-                        objectFit="cover"
                         className='w-full h-full'
+                        width={1000}
+                        height={1000}
                     />
                     <span className="absolute bottom-2 right-2 bg-black bg-opacity-75 px-2 py-1 text-sm rounded text-white">
                         20:45

@@ -48,7 +48,7 @@ function Navbar() {
               src={Banner}
               alt='profile image'
               className='w-10 h-10 rounded-full cursor-pointer'
-              onClick={() => router.push(`/channel/info`)}  // ${loggedInUser?._id}
+              onClick={() => router.push(`/channel/info?tab=personal-information`)}  // ${loggedInUser?._id}
             />
             :
             <div className="flex items-center space-x-8">

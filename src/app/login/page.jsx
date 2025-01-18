@@ -7,6 +7,7 @@ import { baseUrl } from '../../utils/helper';
 import Cookies from 'js-cookie';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 function Login() {
     const navigate = useRouter();
@@ -44,6 +45,9 @@ function Login() {
 
                 setIsAuthenticated(true);
                 setLoggedInUser(response.data.data.user);
+                toast.success("Log in successful", {
+                    theme: "dark",
+                });
             })
             .catch(error => {
                 console.error(error);

@@ -74,7 +74,7 @@ function ChannelCard({channel}) {
     return (
         <div className="w-full">
             <Image
-                src={Banner}
+                src={channel?.coverImage || Banner}
                 alt="Cover Picture"
                 className="w-full h-40 "
                 width={1000}

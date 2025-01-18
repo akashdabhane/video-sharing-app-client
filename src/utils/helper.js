@@ -1,4 +1,5 @@
-export const baseUrl = 'http://localhost:8000/api/v1'
+// export const baseUrl = 'http://localhost:8000/api/v1'
+export const baseUrl = 'https://video-sharing-tfhr.onrender.com/api/v1'
 
 export function formatTimeAgo(createdAt) {
     const now = new Date();
