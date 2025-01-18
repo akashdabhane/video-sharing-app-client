@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 import Navbar from "@/components/Navbar";
@@ -15,6 +15,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useAuth } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/utils/ProtectedRoute";
+import { toast } from "react-toastify";
 
 export default function ChannelPage() {
     const [channel, setChannel] = useState([]);
@@ -65,6 +66,7 @@ export default function ChannelPage() {
     ]
 
     return (
+        <Suspense fallback={<div>Loading...</div>}>
         <ProtectedRoute>
             <div className="flex-1 ">
                 <Navbar />
@@ -102,6 +104,7 @@ export default function ChannelPage() {
                 </div>
             </div>
         </ProtectedRoute>
+        </Suspense>
     );
 }
 
@@ -218,6 +221,7 @@ function ChannelPlayLists() {
 
 function ChannelTweets() {
     const [tweets, setTweets] = useState([]);
+    const [tweetMessage, setTweetsMessage] = useState("");
     const { id } = useParams();
     const { loggedInUser } = useAuth();
 
@@ -240,6 +244,40 @@ function ChannelTweets() {
             })
     }, [])
 
+    const handleAddTweetClick = () => {
+        if (tweetMessage.length > 0) {
+            axios.post(`${baseUrl}/tweets/`, { content: tweetMessage }, {
+                withCredentials: true,
+                headers: {
+                    'Authorization': `Bearer ${Cookies.get('accessToken')}`
+                },
+            })
+                .then(response => {
+                    console.log(response.data);
+                    const updatedData = {
+                        ...response.data.data,
+                        owner: {
+                            fullName: loggedInUser?.fullName,
+                            avatar: loggedInUser?.avatar,
+                            username: loggedInUser?.username,
+                            _id: loggedInUser?._id,
+                        },
+                        isLiked: false,
+                        totalLikes: 0
+                    };
+                    console.log(updatedData)
+                    setTweets([...tweets, updatedData]);
+                    setTweetsMessage("");
+                })
+                .catch(error => {
+                    console.error(error);
+                })
+        } else {
+            toast.warn("Tweet can not be empty", {
+                theme: "dark"
+            })
+        }
+    }
     return (
         <>
             {
@@ -248,14 +286,24 @@ function ChannelTweets() {
                         {
                             id === loggedInUser._id && (
                                 <div className="space-y-1">
-                                    <textarea name="tweet" id="tweet" rows={4} placeholder="Write a tweet"
-                                        className="w-full mx-2 px-2 py-1 bg-transparent border outline-none rounded">
+                                    <textarea
+                                        name="tweet"
+                                        id="tweet"
+                                        rows={4}
+                                        placeholder="Write a tweet"
+                                        className="w-full mx-2 px-2 py-1 bg-transparent border outline-none rounded"
+                                        value={tweetMessage}
+                                        onChange={(e) => setTweetsMessage(e.target.value)}
+                                    >
 
                                     </textarea>
                                     <div className="flex justify-end items-center space-x-4">
                                         <MdOutlineEmojiEmotions className="text-2xl cursor-pointer" />
                                         <MdMoreHoriz className="text-2xl cursor-pointer" />
-                                        <button className="hover:bg-purple-700 bg-purple-500 text-white px-6 py-2 rounded-md">
+                                        <button
+                                            className="hover:bg-purple-700 bg-purple-500 text-white px-6 py-2 rounded-md"
+                                            onClick={handleAddTweetClick}
+                                        >
                                             Send
                                         </button>
                                     </div>
@@ -273,13 +321,23 @@ function ChannelTweets() {
                         {
                             id === "34343" && (
                                 <div className="">
-                                    <textarea name="tweet" id="tweet" rows={5} placeholder="Write a tweet">
+                                    <textarea
+                                        name="tweet"
+                                        id="tweet"
+                                        rows={5}
+                                        placeholder="Write a tweet"
+                                        value={tweetMessage}
+                                        onChange={(e) => setTweetsMessage(e.target.value)}
+                                    >
 
                                     </textarea>
                                     <div className="flex justify-end items-center">
                                         <MdOutlineEmojiEmotions />
                                         <MdMoreHoriz />
-                                        <button className="hover:bg-purple-700 bg-purple-500 text-white px-4 py-2 rounded-md">
+                                        <button
+                                            className="hover:bg-purple-700 bg-purple-500 text-white px-4 py-2 rounded-md"
+                                            onClick={handleAddTweetClick}
+                                        >
                                             Send
                                         </button>
                                     </div>

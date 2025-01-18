@@ -40,7 +40,7 @@ function TweetCard({ tweet, setTweets }) {
     return (
         <div className='flex items-start space-x-4 mx-4 border-b'>
             <Image
-                src={tweet?.owner[0].avatar}
+                src={tweet?.owner[0]?.avatar || tweet?.owner?.avatar}
                 alt="profile image"
                 className='w-14 h-14 rounded-full'
                 width={1000}
@@ -48,7 +48,7 @@ function TweetCard({ tweet, setTweets }) {
             />
             <div className="">
                 <p className='flex items-center space-x-4'>
-                    <span>{tweet?.owner[0].fullName}</span>
+                    <span>{tweet?.owner[0]?.fullName || tweet?.owner?.fullName}</span>
                     <span>{formatTimeAgo(tweet?.createdAt)}</span>
                 </p>
                 <p>{tweet?.content}</p>
