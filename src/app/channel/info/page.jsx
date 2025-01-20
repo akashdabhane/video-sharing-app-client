@@ -1,6 +1,6 @@
 'use client';
-export const dynamic = 'force-dynamic'; 
-import { useState, useEffect } from "react";
+export const dynamic = 'force-dynamic';
+import { useState, useEffect, Suspense } from "react";
 import ChannelCard from "@/components/ChannelCard";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
@@ -10,7 +10,15 @@ import Cookies from "js-cookie";
 import ProtectedRoute from "@/utils/ProtectedRoute";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function ChannelInfo() {
+export default function ChannelInfoMain() {
+    return (
+        <Suspense>
+            <ChannelInfo />
+        </Suspense>
+    )
+}
+
+function ChannelInfo() {
     const [channel, setChannel] = useState({});
     const navigate = useRouter();
     const searchParams = useSearchParams();

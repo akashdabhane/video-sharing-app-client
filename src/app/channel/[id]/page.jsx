@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 import Navbar from "@/components/Navbar";
@@ -17,7 +17,15 @@ import { useAuth } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/utils/ProtectedRoute";
 import { toast } from "react-toastify";
 
-export default function ChannelPage() {
+export default function ChannelPageMain() {
+    return (
+        <Suspense>
+            <ChannelPage />
+        </Suspense>
+    )
+}
+
+function ChannelPage() {
     const [channel, setChannel] = useState([]);
     const { id } = useParams();
     const router = useRouter();
