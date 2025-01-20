@@ -7,13 +7,15 @@ import axios from 'axios';
 import { baseUrl } from '../utils/helper';
 import Cookies from 'js-cookie';
 import { useAuth } from "@/contexts/AuthContext";
+import { usePathname } from 'next/navigation';
 
-function ChannelCard({channel}) {
+function ChannelCard({ channel }) {
     const [editChannelInfo, setEditChannelInfo] = useState(false);
     const { id } = useParams();
     const { loggedInUser } = useAuth();
+    const pathname = usePathname();
 
-
+    console.log(channel)
     const handleUpdateChannelInfo = () => {
         axios.patch(`${baseUrl}/users/update-account`, {}, {
             withCredentials: true,
@@ -70,6 +72,40 @@ function ChannelCard({channel}) {
             })
     }
 
+    const handleOnSubscribeClick = () => {
+        axios.post(`${baseUrl}/subscriptions/c/${channel?._id}`, {}, {
+            withCredentials: true,
+            headers: {
+                'Authorization': `Bearer ${Cookies.get('accessToken')}`
+            },
+        })
+            .then(response => {
+                console.log(response.data);
+
+                setVideo({
+                    ...channel,
+                    isSubscribed: response.data.statusCode === 201 ? true : false,
+                    subscribersCount: response.data.statusCode === 201 ? channel.subscribersCount + 1 : channel.subscribersCount - 1
+                })
+
+                if (response.data.statusCode === 201) {
+                    toast.success("Subscribed!", {
+                        theme: "dark"
+                    });
+                }
+                if (response.data.statusCode === 200) {
+                    toast.success("Unsubscribed!", {
+                        theme: "dark"
+                    });
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                toast.error("Failed to subscribe/unsubscribe!", {
+                    theme: "dark"
+                });
+            })
+    }
 
     return (
         <div className="w-full">
@@ -103,10 +139,21 @@ function ChannelCard({channel}) {
                         className="text-sm text-gray-400 bg-transparent border-none outline-none"
                         disabled={editChannelInfo ? false : true}
                     />
-                    <p className="text-sm text-gray-400">600k Subscribers · 220 Subscribed</p>
+                    {
+                        pathname !== "/channel/info" && (
+                            <ul className='space-x-4 flex items-center text-sm text-gray-400'>
+                                <li>
+                                    {channel?.subscribersCount} {channel?.subscribersCount > 1 ? "Subscribers" : "Subscriber"}
+                                </li>
+                                <li >
+                                    {channel?.channelsSubscribedToCount} Subscribed
+                                </li>
+                            </ul>
+                        )
+                    }
                 </div>
                 {
-                    (id === loggedInUser?._id)
+                    (id === loggedInUser?._id || pathname === "/channel/info")
                         ?
                         (
                             editChannelInfo ?
@@ -126,7 +173,14 @@ function ChannelCard({channel}) {
                         )
                         :
                         (
-                            <button className="ml-auto bg-purple-500 text-white px-3 py-1 md:px-4 md:py-2 rounded-md">Subscribe</button>
+                            <button
+                                className="ml-auto bg-purple-500 text-white px-3 py-1 md:px-4 md:py-2 rounded-md"
+                                onClick={handleOnSubscribeClick}
+                            >
+                                {
+                                    channel?.isSubscribed ? "Unsubscribe" : "Subscribe"
+                                }
+                            </button>
                         )
                 }
             </div>

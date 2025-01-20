@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useState, Suspense } from "react";
+export const dynamic = 'force-dynamic'; 
+import { useEffect, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 import Navbar from "@/components/Navbar";
@@ -66,7 +67,6 @@ export default function ChannelPage() {
     ]
 
     return (
-        <Suspense fallback={<div>Loading...</div>}>
         <ProtectedRoute>
             <div className="flex-1 ">
                 <Navbar />
@@ -104,7 +104,6 @@ export default function ChannelPage() {
                 </div>
             </div>
         </ProtectedRoute>
-        </Suspense>
     );
 }
 
@@ -389,8 +388,8 @@ function ChannelSubscribers() {
                             className="w-full bg-gray-800 text-white p-3 rounded-md outline-none"
                         />
                         {
-                            Array.from({ length: 6 }).map((_, idx) => (
-                                <SubscriberCard key={idx} />
+                            subscribers.map((subscriber, index) => (
+                                <SubscriberCard subscriber={subscriber} key={index} />
                             ))
                         }
                     </div>

@@ -81,6 +81,41 @@ export default function WatchVideo() {
             })
     }
 
+    const handleOnSubscribeClick = () => {
+        axios.post(`${baseUrl}/subscriptions/c/${video?.owner[0]?._id}`, {}, {
+            withCredentials: true,
+            headers: {
+                'Authorization': `Bearer ${Cookies.get('accessToken')}`
+            },
+        })
+            .then(response => {
+                console.log(response.data);
+
+                setVideo({
+                    ...video,
+                    isSubscribed: response.data.statusCode === 201 ? true : false,
+                    totalSubscribers: response.data.statusCode === 201 ? video.totalSubscribers + 1 : video.totalSubscribers - 1
+                })
+
+                if(response.data.statusCode === 201) {
+                    toast.success("Subscribed!", {
+                        theme: "dark"
+                    });
+                } 
+                if(response.data.statusCode === 200) {
+                    toast.success("Unsubscribed!", {
+                        theme: "dark"
+                    });
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                toast.error("Failed to subscribe/unsubscribe!", {
+                    theme: "dark"
+                });
+            })
+    }
+
     return (
         <ProtectedRoute>
             <div className="flex-1 ">
@@ -139,11 +174,17 @@ export default function WatchVideo() {
                                             </div>
                                             {
                                                 video?.isSubscribed ?
-                                                    <button className="ml-auto bg-gray-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+                                                    <button
+                                                        className="ml-auto bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
+                                                        onClick={handleOnSubscribeClick}
+                                                    >
                                                         Subscribed
                                                     </button>
                                                     :
-                                                    <button className="ml-auto bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+                                                    <button
+                                                        className="ml-auto bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
+                                                        onClick={handleOnSubscribeClick}
+                                                    >
                                                         Subscribe
                                                     </button>
                                             }
@@ -284,7 +325,7 @@ const CommentsSection = () => {
         })
             .then(response => {
                 console.log(response.data);
-                
+
                 // Update the specific comment in the comments state
                 setComments(prevComments =>
                     prevComments.map(comment =>

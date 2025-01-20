@@ -1,5 +1,6 @@
 'use client';
-import { useState, useEffect, Suspense } from "react";
+export const dynamic = 'force-dynamic'; 
+import { useState, useEffect } from "react";
 import ChannelCard from "@/components/ChannelCard";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
@@ -53,7 +54,6 @@ export default function ChannelInfo() {
     }, []);
 
     return (
-        <Suspense fallback={<div>Loading...</div>}>
         <ProtectedRoute>
             <div className="min-h-screen bg-black text-white flex flex-col lg:flex-row">
 
@@ -103,7 +103,6 @@ export default function ChannelInfo() {
 
             </div>
         </ProtectedRoute>
-        </Suspense>
     );
 }
 
