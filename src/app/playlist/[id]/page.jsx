@@ -15,7 +15,7 @@ export default function PlaylistPage() {
     const { id } = useParams();
 
     useEffect(() => {
-        axios.post(`${baseUrl}/playlist/${id}`, {}, {
+        axios.get(`${baseUrl}/playlist/${id}`, {
             withCredentials: true,
             headers: {
                 'Authorization': `Bearer ${Cookies.get('accessToken')}`

@@ -1,5 +1,4 @@
-"use client";
-export const dynamic = 'force-dynamic'; 
+'use client';
 import { useEffect, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
@@ -24,7 +23,7 @@ export default function ChannelPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const tab = searchParams.get("tab");
-
+    console.log(searchParams)
     useEffect(() => {
         axios.get(`${baseUrl}/users/channel/${id}`, {
             withCredentials: true,

@@ -22,13 +22,13 @@ function UploadVideo({ isUploadModalOpen, setUploadModalOpen }) {
             });
         }, 300);
     };
-    console.log(isUploadModalOpen)
+
     return (
-        <>
+        <div className='fixed top-0 right-0 w-full h-full flex justify-center z-40'>
             {/* Upload Modal */}
             {
                 isUploadModalOpen && (
-                    <div className="sticky top-40 right-40 inset-0 bg-black text-white min-h-screen bg-opacity-75 flex items-center justify-center">
+                    <div className="fixed w-full top-40 right-40 inset-0 bg-black text-white min-h-screen bg-opacity-75 flex items-center justify-center p-6">
                         <div className="bg-gray-800 p-6 rounded-lg w-96">
                             {
                                 (!isUploading && !isUploadComplete) && (
@@ -50,7 +50,7 @@ function UploadVideo({ isUploadModalOpen, setUploadModalOpen }) {
                         </div>
                     </div>
                 )}
-        </>
+        </div>
     );
 }
 

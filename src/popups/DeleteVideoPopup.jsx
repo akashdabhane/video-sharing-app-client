@@ -6,8 +6,8 @@ const DeleteVideoModal = ({ isOpen, onClose, onDelete }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-20 bg-black/50 backdrop-blur-sm">
-            <div className="relative w-11/12 max-w-md bg-black text-white rounded-lg shadow-lg p-6">
+        <div className="w-[100vw] h-[100vh] inset-0 flex items-center justify-center px-20 bg-black/50 backdrop-blur-sm">
+            <div className="z-60 absolute top-0 right-0 bg-black text-white rounded-lg shadow-lg p-6">
                 {/* Close Button */}
                 <button
                     onClick={onClose}
