@@ -73,7 +73,7 @@ export default function ChannelPage() {
                 <div className="min-h-screen bg-black text-white flex">
                     <Sidebar />
                     <div className="p-4 w-full">
-                        <ChannelCard channel={channel} />
+                        <ChannelCard channel={channel} setChannel={setChannel} />
                         <div className="mt-6 border-b border-gray-700 ">
                             <ul className="grid grid-cols-4 text-center">
                                 {

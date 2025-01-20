@@ -8,14 +8,15 @@ import { baseUrl } from '../utils/helper';
 import Cookies from 'js-cookie';
 import { useAuth } from "@/contexts/AuthContext";
 import { usePathname } from 'next/navigation';
+import { MdOutlineEdit } from "react-icons/md";
+import { toast } from 'react-toastify';
 
-function ChannelCard({ channel }) {
+function ChannelCard({ channel, setChannel }) {
     const [editChannelInfo, setEditChannelInfo] = useState(false);
     const { id } = useParams();
     const { loggedInUser } = useAuth();
     const pathname = usePathname();
 
-    console.log(channel)
     const handleUpdateChannelInfo = () => {
         axios.patch(`${baseUrl}/users/update-account`, {}, {
             withCredentials: true,
@@ -35,41 +36,83 @@ function ChannelCard({ channel }) {
     }
 
 
-    const handleUpdateAvatar = () => {
-        axios.patch(`${baseUrl}/users/avatar`, {}, {
-            withCredentials: true,
-            headers: {
-                'Authorization': `Bearer ${Cookies.get('accessToken')}`
-            },
-        })
-            .then(response => {
-                console.log(response.data);
+    const handleUpdateAvatar = (file) => {
+        if(id !== loggedInUser._id) {
+            toast("You can't update this channel", {
+                theme: "dark"
             })
-            .catch(error => {
-                console.error(error);
+            return;
+        }
+
+        if (file) {
+            // Create a FormData object to properly send the file
+            const formData = new FormData();
+            formData.append("avatar", file);
+
+            axios.patch(`${baseUrl}/users/avatar`, formData, {
+                withCredentials: true,
+                headers: {
+                    'Authorization': `Bearer ${Cookies.get('accessToken')}`
+                },
             })
-            .finally(() => {
-                // loading false
+                .then(response => {
+                    console.log(response.data.data);
+                    setChannel({
+                        ...channel,
+                        avatar: response.data.data.avatar
+                    })
+                })
+                .catch(error => {
+                    console.error(error);
+                })
+                .finally(() => {
+                    // loading false
+                })
+        } else {
+            toast("File is not selected", {
+                theme: "dark"
             })
+        }
     }
 
 
-    const handleUpdateCoverImage = () => {
-        axios.patch(`${baseUrl}/users/cover-image`, {}, {
-            withCredentials: true,
-            headers: {
-                'Authorization': `Bearer ${Cookies.get('accessToken')}`
-            },
-        })
-            .then(response => {
-                console.log(response.data);
+    const handleUpdateCoverImage = (file) => {
+        if(id !== loggedInUser._id) {
+            toast("You can't update this channel", {
+                theme: "dark"
             })
-            .catch(error => {
-                console.error(error);
+            return;
+        }
+
+        if (file) {
+            // Create a FormData object to properly send the file
+            const formData = new FormData();
+            formData.append("coverImage", file);
+
+            axios.patch(`${baseUrl}/users/cover-image`, formData, {
+                withCredentials: true,
+                headers: {
+                    'Authorization': `Bearer ${Cookies.get('accessToken')}`
+                },
             })
-            .finally(() => {
-                // loading false
+                .then(response => {
+                    console.log(response.data.data);
+                    setChannel({
+                        ...channel,
+                        coverImage: response.data.data.coverImage
+                    })
+                })
+                .catch(error => {
+                    console.error(error);
+                })
+                .finally(() => {
+                    // loading false
+                })
+        } else {
+            toast("File is not selected", {
+                theme: "dark"
             })
+        }
     }
 
     const handleOnSubscribeClick = () => {
@@ -108,7 +151,15 @@ function ChannelCard({ channel }) {
     }
 
     return (
-        <div className="w-full">
+        <div className="w-full relative">
+            <input type="file" name="coverImageInput" id="coverImageInput" className='hidden'
+                onChange={(e) => handleUpdateCoverImage(e.target.files[0])} />
+            <label
+                htmlFor="coverImageInput"
+                className={`${editChannelInfo === false && "hidden"} text-white md:text-base absolute top-[7rem] right-2 w-10 h-10 bg-gray-400 cursor-pointer hover:bg-gray-500 rounded-full flex justify-center items-center`}
+            >
+                <MdOutlineEdit className='text-2xl' />
+            </label>
             <Image
                 src={channel?.coverImage || Banner}
                 alt="Cover Picture"
@@ -116,7 +167,7 @@ function ChannelCard({ channel }) {
                 width={1000}
                 height={1000}
             />
-            <div className="flex items-start md:items-center gap-4 m-6">
+            <div className="flex items-start md:items-center gap-4 m-6 relative">
                 <Image
                     src={channel?.avatar || Banner}
                     alt="Profile Picture"
@@ -124,6 +175,14 @@ function ChannelCard({ channel }) {
                     width={1000}
                     height={1000}
                 />
+                <input type="file" name="avatarInput" id="avatarInput" className='hidden'
+                    onChange={(e) => handleUpdateAvatar(e.target.files[0])} />
+                <label
+                    htmlFor="avatarInput"
+                    className={`${editChannelInfo === false && "hidden"} text-white md:text-base absolute top-[3rem] right-[70rem] w-7 h-7 bg-gray-400 cursor-pointer hover:bg-gray-500 rounded-full flex justify-center items-center`}
+                >
+                    <MdOutlineEdit className='text-lg' />
+                </label>
                 <div className='flex flex-col'>
                     <input
                         type='text'

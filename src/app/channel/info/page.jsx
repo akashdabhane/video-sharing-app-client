@@ -62,7 +62,7 @@ export default function ChannelInfo() {
                     <div className="min-h-screen bg-black text-white flex">
                         <Sidebar />
                         <div className="p-4 w-full">
-                            <ChannelCard channel={channel} />
+                            <ChannelCard channel={channel} setChannel={setChannel} />
 
                             {/* Tabs */}
                             <nav className="flex border-b border-gray-700">
