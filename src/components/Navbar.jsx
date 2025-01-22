@@ -29,11 +29,11 @@ function Navbar() {
             <span className="text-xl font-bold">PLAY</span>
           </div>
         </div>
-        <div className="flex items-center bg-gray-800 rounded-full focus:ring-purple-500 focus:outline-none focus:ring-2">
+        <div className="flex items-center bg-gray-800 rounded-full focus:ring-purple-500 focus:outline-none focus:ring-2 w-full md:w-[30rem] mr-2 md:mr-0">
           <input
             type="text"
             placeholder="Search"
-            className="bg-gray-800 w-[30rem] text-sm px-4 py-2 rounded-full mr-2 md:mr-0 outline-none"
+            className="bg-gray-800 w-full md:w-[30rem] text-sm px-4 py-2 rounded-full md:mr-0 outline-none"
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
             onKeyDown={(e) => (e.key === 'Enter' && searchText.trim() !== "") && router.push(`/search?q=${searchText}`)}

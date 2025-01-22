@@ -42,7 +42,7 @@ export default function Search() {
           <Sidebar />
 
           {/* Main Content */}
-          <main className="flex-1 p-4">
+          <main className="flex-1 p-2 md:p-4">
             {
               searchResultVideos.length < 0 ?
                 <div className="flex flex-col items-center justify-center min-h-[50vh] text-gray-400">

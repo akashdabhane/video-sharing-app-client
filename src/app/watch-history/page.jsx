@@ -42,7 +42,7 @@ function WatchHistoryPage() {
                 <div className="min-h-screen bg-black text-white flex w-full">
                     <Sidebar />
                     <div className="p-2 md:p-4 w-full flex flex-col md:flex-row">
-                        <div className="grid grid-cols-1 gap-3 md:gap-4 mt-4 w-[50rem] md:mx-6">
+                        <div className="grid grid-cols-1 gap-3 md:gap-4 mt-4 md:w-[50rem] md:mx-6">
                             {
                                 loading
                                 ?

@@ -11,8 +11,8 @@ function VideoCardListView({ video, cross }) {
 
     return (
         <div onClick={() => router.push(`/watch/v/${video?._id}`)}>
-            <div className={`flex ${cross ? "flex-row" : "flex-col"} md:flex-row mx-2 md:mx-6 bg-gray-900 rounded-lg overflow-hidden shadow-lg cursor-pointer`}>
-                <div className="relative w-full md:w-60 h-32">
+            <div className={`flex flex-col md:flex-row mx-2 md:mx-6 bg-gray-900 rounded-lg overflow-hidden shadow-lg cursor-pointer`}>
+                <div className="relative w-full md:w-60 h-60 md:h-32">
                     <Image
                         src={video?.thumbnail}
                         alt="Video Thumbnail"

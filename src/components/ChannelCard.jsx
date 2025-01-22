@@ -168,7 +168,7 @@ function ChannelCard({ channel, setChannel }) {
                 width={1000}
                 height={1000}
             />
-            <div className="flex items-start md:items-center gap-4 m-6 relative">
+            <div className="flex items-start md:items-center gap-4 mx-4 my-6 md:m-6 relative">
                 <Image
                     src={channel?.avatar || Banner}
                     alt="Profile Picture"
@@ -194,12 +194,18 @@ function ChannelCard({ channel, setChannel }) {
                     {
                         pathname !== "/channel/info" && (
                             <ul className='space-x-4 flex items-center text-sm text-gray-400'>
-                                <li>
-                                    {channel?.subscribersCount || <Skeleton width={50} />}
-                                    {channel?.subscribersCount && (channel?.subscribersCount > 1 ? " Subscribers" : " Subscriber")}
+                                <li className='flex space-x-1 items-center'>
+                                    <span>
+                                        {channel?.subscribersCount || <Skeleton width={50} />}
+                                    </span>
+                                    <span>
+                                        {channel?.subscribersCount && (channel?.subscribersCount > 1 ? " Subscribers" : " Subscriber")}
+                                    </span>
                                 </li>
-                                <li >
-                                    {channel?.channelsSubscribedToCount || <Skeleton width={50} />}
+                                <li className='flex space-x-1 items-center'>
+                                    <span>
+                                        {channel?.channelsSubscribedToCount || <Skeleton width={50} />}
+                                    </span>
                                     <span>{channel?.channelsSubscribedToCount && " Subscribed"}</span>
                                 </li>
                             </ul>

@@ -31,16 +31,16 @@ function Sidebar() {
             link: `/channel/${loggedInUser?._id}?tab=videos`,
             icon: <FaVideo className='text-xl' />,
         },
-        {
-            title: 'Collection',
-            link: '/collection',
-            icon: <FaBookmark className='text-xl' />,
-        },
-        {
-            title: 'Subscribers',
-            link: '/subscribers',
-            icon: <FaUsers className='text-xl' />,
-        },
+        // {
+        //     title: 'Collection',
+        //     link: '/collection',
+        //     icon: <FaBookmark className='text-xl' />,
+        // },
+        // {
+        //     title: 'Subscribers',
+        //     link: '/subscribers',
+        //     icon: <FaUsers className='text-xl' />,
+        // },
     ]
 
     const menu2 = [

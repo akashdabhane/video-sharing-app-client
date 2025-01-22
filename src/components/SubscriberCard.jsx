@@ -5,7 +5,7 @@ import Image from 'next/image';
 
 function SubscriberCard({ subscriber }) {
     return (
-        <div className="flex justify-between items-center gap-2 mx-28 border-b p-2">
+        <div className="flex justify-between items-center gap-2 px-2 md:px-0 md:mx-28 border-b p-2">
             <div className="flex items-center space-x-2">
                 <Image
                     src={subscriber?.subscriber?.avatar}

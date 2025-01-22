@@ -69,7 +69,7 @@ function ChannelInfo() {
                     <Navbar />
                     <div className="min-h-screen bg-black text-white flex">
                         <Sidebar />
-                        <div className="p-4 w-full">
+                        <div className="p-3 md:p-4 w-full">
                             <ChannelCard channel={channel} setChannel={setChannel} />
 
                             {/* Tabs */}
@@ -162,7 +162,7 @@ function EditPersonalInfoForm({ name, email }) {
                 <p className="text-gray-400 mb-4">Update your photo and personal details.</p>
             </div>
             <form className="space-y-4" onSubmit={(e) => updateUserInformation(e)}>
-                <div className="flex items-center space-x-2 w-[27rem]">
+                <div className="flex items-center space-x-2 w-full md:w-[27rem]">
                     <div className="w-full">
                         <label className="block text-sm">Name</label>
                         <input
@@ -267,7 +267,7 @@ function EditChannelInfoForm({ username, description }) {
                 <p className="text-gray-400 mb-4">Update your Channel details here.</p>
             </div>
             <form className="space-y-4" onSubmit={(e) => handleUpdateChannelInfo(e)}>
-                <div className="w-[27rem]">
+                <div className="w-full md:w-[27rem]">
                     <label className="block text-sm">Username</label>
                     <div className="flex items-center bg-gray-800 border border-gray-700 rounded-md">
                         <span className="px-3">vidplay.com/</span>
@@ -384,7 +384,7 @@ function ChangePasswordForm() {
                 <p className="text-gray-400 mb-4">Please enter your current password to change your password.</p>
             </div>
             <form className="space-y-4" onSubmit={(e) => handleChangePassword(e)}>
-                <div className="w-[27rem]">
+                <div className="w-full md:w-[27rem]">
                     <label className="block text-sm">Current password</label>
                     <input
                         type="password"

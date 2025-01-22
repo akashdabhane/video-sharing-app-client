@@ -129,7 +129,7 @@ export default function WatchVideo() {
                 <Navbar />
                 <div className="h-screen w-full bg-black text-white flex ">
                     <Sidebar />
-                    <div className="p-4 flex flex-col md:flex-row w-full">
+                    <div className="p-2 md:p-4 flex flex-col md:flex-row w-full">
                         <div className="w-full">
                             {
                                 Object.keys(video).length > 0 ? (
@@ -216,7 +216,7 @@ export default function WatchVideo() {
 
                         </div>
 
-                        <div className="grid grid-cols-1 gap-4 mt-4 w-[60%]">
+                        <div className="grid grid-cols-1 gap-4 mt-4 w-full md:w-[60%]">
                             {
                                 loading.suggestedVideos
                                     ?

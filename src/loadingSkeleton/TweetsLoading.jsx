@@ -3,7 +3,7 @@ import Skeleton from 'react-loading-skeleton'
 
 function TweetsLoading({ cards, isSubscribers }) {
     return (
-        <div className={`${isSubscribers && "mx-28"} space-y-4`}>
+        <div className={`${isSubscribers && "md:mx-28"} space-y-4`}>
             {
                 Array(cards).fill(0).map((_, index) => (
                     <div className='flex items-start space-x-4 mx-4 border-b my-8 p-2' key={index}>

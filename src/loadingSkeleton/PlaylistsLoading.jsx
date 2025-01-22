@@ -3,7 +3,7 @@ import Skeleton from 'react-loading-skeleton'
 
 function PlaylistsLoading({ cards, showUserProfile }) {
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 m-3">
             {
                 Array(cards).fill(0).map((item, index) => (
                     <div className='md:m-4 w-full' key={index}>

@@ -82,7 +82,7 @@ function ChannelPage() {
                 <Navbar />
                 <div className="min-h-screen bg-black text-white flex">
                     <Sidebar />
-                    <div className="p-4 w-full">
+                    <div className="p-0 md:pl-4 md:py-0 w-full">
                         <ChannelCard channel={channel} setChannel={setChannel} />
                         <div className="mt-6 border-b border-gray-700 ">
                             <ul className="grid grid-cols-4 text-center">
@@ -152,7 +152,7 @@ function ChannelVideos() {
                         {
                             videos && videos.length > 0
                                 ?
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 ml-3">
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 m-2 md:mt-4 md:ml-3">
                                     {
                                         videos.map((item, index) => (
                                             <VideoCard item={item} key={index} />
@@ -226,7 +226,7 @@ function ChannelPlayLists() {
                     <>
                         {
                             playlists && playlists.length > 0 ?
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ">
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 m-2 md:m-0">
                                     {
                                         playlists.map((playlist, index) => (
                                             <PlaylistCard playlist={playlist} showUserProfile={false} key={index} onClick={() => router.push(`/playlist/${item._id}`)} />
@@ -319,13 +319,13 @@ function ChannelTweets() {
                                 <div className="grid grid-cols-1 gap-4 mt-3">
                                     {
                                         id === loggedInUser._id && (
-                                            <div className="space-y-1">
+                                            <div className="space-y-1 w-[97%] mx-2 ">
                                                 <textarea
                                                     name="tweet"
                                                     id="tweet"
                                                     rows={4}
                                                     placeholder="Write a tweet"
-                                                    className="w-full mx-2 px-2 py-1 bg-transparent border outline-none rounded"
+                                                    className="w-full px-2 py-1 bg-transparent border outline-none rounded"
                                                     value={tweetMessage}
                                                     onChange={(e) => setTweetsMessage(e.target.value)}
                                                 >
@@ -420,12 +420,12 @@ function ChannelSubscribers() {
             {
                 loading
                     ?
-                    <TweetsLoading cards={10} isSubscribers={true} className="mx-20" />
+                    <TweetsLoading cards={10} isSubscribers={true} className="md:mx-20" />
                     :
                     <>
                         {
                             subscribers.length > 0 ?
-                                <div className="grid grid-cols-1 gap-4 mt-4 mx-24">
+                                <div className="grid grid-cols-1 gap-4 mt-4 mx-2 md:mx-24">
                                     <input
                                         type="text"
                                         placeholder="Search for a subscriber"
