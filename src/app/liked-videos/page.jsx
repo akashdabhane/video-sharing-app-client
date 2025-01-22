@@ -10,9 +10,14 @@ import Cookies from 'js-cookie';
 import ProtectedRoute from '@/utils/ProtectedRoute';
 import Banner from "@/images/banner.png";
 import Image from 'next/image';
+import VideosListViewLoading from '@/loadingSkeleton/VideosListViewLoading';
+import { useAuth } from '@/contexts/AuthContext';
+import Skeleton from 'react-loading-skeleton';
 
 function LikedVideosPage() {
     const [likedVideos, setLikedvideos] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const { loggedInUser } = useAuth();
 
     useEffect(() => {
         //---------------    /videos/channel/66843834742908baa9ef75d0
@@ -30,7 +35,7 @@ function LikedVideosPage() {
                 console.error(error);
             })
             .finally(() => {
-                // loading false
+                setLoading(false);
             })
     }, [])
 
@@ -44,38 +49,54 @@ function LikedVideosPage() {
                     <div className="p-2 md:p-4 w-full flex flex-col md:flex-row">
                         <div className='w-full md:w-[28rem] md:m-4 cursor-pointer'>
                             <div className="">
-                                <Image
-                                    src={"https://res.cloudinary.com/domlldpib/image/upload/v1737391634/videotube/huftftsar2unqiiitauk.webp"}
-                                    alt="playlist banner"
-                                    className="w-full h-60 mb-10"
-                                    width={1000} 
-                                    height={1000}
-                                />
+                                {
+                                    !loading
+                                        ?
+                                        <Image
+                                            src={"https://res.cloudinary.com/domlldpib/image/upload/v1737391634/videotube/huftftsar2unqiiitauk.webp"}
+                                            alt="playlist banner"
+                                            className="w-full h-60 mb-10"
+                                            width={1000}
+                                            height={1000}
+                                        />
+                                        :
+                                        <Skeleton height={250} />
+                                }
                                 <div className="relative -top-16 px-4 py-6 bg-gray-800/50 backdrop-blur-md">
                                     <p className='flex items-center justify-between'>
-                                        <span>{"Akash Dabhane"}</span>
-                                        <span>2385 videos</span>
+                                        <span>{!loading ? loggedInUser?.fullName : <Skeleton width={40} />}</span>
+                                        <span>{!loading ? `${likedVideos.length} videos` : <Skeleton width={40} />} </span>
                                     </p>
                                 </div>
                             </div>
-                            <div className="relative -top-[3.8rem] left-2">
-                                <h3 className='text-lg'>{"Liked videos"}</h3>
-                                <p className='line-clamp-1'>{"videos that are liked by you"}</p>
-                            </div>
-                        </div>
-                        <div className="space-y-3  mt-4 w-full">
                             {
-                                likedVideos.length > 0
-                                    ?
-                                    likedVideos.map(video => (
-                                        <VideoCardListView cross={true} key={video._id} video={video?.video} />
-                                    ))
-                                    :
-                                    <div className='text-white text-center my-40'>
-                                        <h2>No Liked Videos</h2>
+                                loading === false && (
+                                    <div className="relative -top-[3.8rem] left-2">
+                                        <h3 className='text-lg'>{"Liked videos"}</h3>
+                                        <p className='line-clamp-1'>{"videos that are liked by you"}</p>
                                     </div>
+                                )
                             }
                         </div>
+                        {
+                            loading
+                                ?
+                                <VideosListViewLoading cross={true} cards={10} />
+                                :
+                                <div className="space-y-3  mt-4 w-full">
+                                    {
+                                        likedVideos.length > 0
+                                            ?
+                                            likedVideos.map(video => (
+                                                <VideoCardListView cross={true} key={video._id} video={video?.video} />
+                                            ))
+                                            :
+                                            <div className='text-white text-center my-40'>
+                                                <h2>No Liked Videos</h2>
+                                            </div>
+                                    }
+                                </div>
+                        }
                     </div>
                 </div>
             </div>

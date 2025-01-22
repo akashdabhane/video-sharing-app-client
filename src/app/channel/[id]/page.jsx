@@ -16,6 +16,9 @@ import Cookies from "js-cookie";
 import { useAuth } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/utils/ProtectedRoute";
 import { toast } from "react-toastify";
+import VideosLoading from "@/loadingSkeleton/VideosLoading";
+import PlaylistsLoading from "@/loadingSkeleton/PlaylistsLoading";
+import TweetsLoading from "@/loadingSkeleton/TweetsLoading";
 
 export default function ChannelPageMain() {
     return (
@@ -118,6 +121,7 @@ function ChannelVideos() {
     const [videos, setVideos] = useState([]);
     const [isUploadModalOpen, setUploadModalOpen] = useState(false);
     const { id } = useParams();
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         axios.get(`${baseUrl}/videos/channel/${id}`, {
@@ -133,41 +137,49 @@ function ChannelVideos() {
                 console.error(error);
             })
             .finally(() => {
-                // loading
+                setLoading(false);
             })
     }, []);
 
     return (
         <>
             {
-                videos && videos.length > 0
+                loading
                     ?
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 ml-3">
-                        {
-                            videos.map((item, index) => (
-                                <VideoCard item={item} key={index} />
-                            ))
-                        }
-                    </div>
+                    <VideosLoading cards={12} />
                     :
-                    <div id="videos" className="mt-4">
-                        <div className="text-center text-gray-400">
-                            <h1 className="text-lg">No videos uploaded</h1>
-                            <p className="text-sm">This page has yet to upload a video. Search another page in order to find more videos.</p>
-                            <div className="flex justify-center">
-                                {
-                                    "234343" === "234343" && (
-                                        <button className="hover:bg-purple-700 bg-purple-500 text-white px-4 py-2 rounded-md mt-4"
-                                            onClick={() => setUploadModalOpen(true)}
-                                        >
-                                            New Video
-                                        </button>
-                                    )
-                                }
-                            </div>
-                        </div>
-                    </div>
+                    <>
+                        {
+                            videos && videos.length > 0
+                                ?
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 ml-3">
+                                    {
+                                        videos.map((item, index) => (
+                                            <VideoCard item={item} key={index} />
+                                        ))
+                                    }
+                                </div>
+                                :
+                                <div id="videos" className="mt-4">
+                                    <div className="text-center text-gray-400">
+                                        <h1 className="text-lg">No videos uploaded</h1>
+                                        <p className="text-sm">This page has yet to upload a video. Search another page in order to find more videos.</p>
+                                        <div className="flex justify-center">
+                                            {
+                                                "234343" === "234343" && (
+                                                    <button className="hover:bg-purple-700 bg-purple-500 text-white px-4 py-2 rounded-md mt-4"
+                                                        onClick={() => setUploadModalOpen(true)}
+                                                    >
+                                                        New Video
+                                                    </button>
+                                                )
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
 
+                        }
+                    </>
             }
 
             {
@@ -182,6 +194,7 @@ function ChannelPlayLists() {
     const [playlists, setPlaylists] = useState([]);
     const router = useRouter();
     const { id } = useParams();
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         axios.get(`${baseUrl}/playlist/user/${id}`, {
@@ -198,7 +211,7 @@ function ChannelPlayLists() {
                 console.error(error);
             })
             .finally(() => {
-                // loading false
+                setLoading(false);
             })
     }, []);
 
@@ -206,19 +219,27 @@ function ChannelPlayLists() {
     return (
         <>
             {
-                playlists && playlists.length > 0 ?
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ">
-                        {
-                            playlists.map((playlist, index) => (
-                                <PlaylistCard playlist={playlist} showUserProfile={false} key={index} onClick={() => router.push(`/playlist/${item._id}`)} />
-                            ))
-                        }
-                    </div>
+                loading
+                    ?
+                    <PlaylistsLoading cards={9} showUserProfile={false} />
                     :
-                    <EmptySectionComp
-                        title={"No playlist created"}
-                        description={"There are no playlist created on this channel."}
-                    />
+                    <>
+                        {
+                            playlists && playlists.length > 0 ?
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ">
+                                    {
+                                        playlists.map((playlist, index) => (
+                                            <PlaylistCard playlist={playlist} showUserProfile={false} key={index} onClick={() => router.push(`/playlist/${item._id}`)} />
+                                        ))
+                                    }
+                                </div>
+                                :
+                                <EmptySectionComp
+                                    title={"No playlist created"}
+                                    description={"There are no playlist created on this channel."}
+                                />
+                        }
+                    </>
             }
         </>
     )
@@ -230,6 +251,7 @@ function ChannelTweets() {
     const [tweetMessage, setTweetsMessage] = useState("");
     const { id } = useParams();
     const { loggedInUser } = useAuth();
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         axios.get(`${baseUrl}/tweets/user/${id}`, {
@@ -246,7 +268,7 @@ function ChannelTweets() {
                 console.error(error);
             })
             .finally(() => {
-                // loading false
+                setLoading(false);
             })
     }, [])
 
@@ -287,74 +309,82 @@ function ChannelTweets() {
     return (
         <>
             {
-                tweets && tweets.length > 0 ?
-                    <div className="grid grid-cols-1 gap-4 mt-3">
-                        {
-                            id === loggedInUser._id && (
-                                <div className="space-y-1">
-                                    <textarea
-                                        name="tweet"
-                                        id="tweet"
-                                        rows={4}
-                                        placeholder="Write a tweet"
-                                        className="w-full mx-2 px-2 py-1 bg-transparent border outline-none rounded"
-                                        value={tweetMessage}
-                                        onChange={(e) => setTweetsMessage(e.target.value)}
-                                    >
-
-                                    </textarea>
-                                    <div className="flex justify-end items-center space-x-4">
-                                        <MdOutlineEmojiEmotions className="text-2xl cursor-pointer" />
-                                        <MdMoreHoriz className="text-2xl cursor-pointer" />
-                                        <button
-                                            className="hover:bg-purple-700 bg-purple-500 text-white px-6 py-2 rounded-md"
-                                            onClick={handleAddTweetClick}
-                                        >
-                                            Send
-                                        </button>
-                                    </div>
-                                </div>
-                            )
-                        }
-                        {
-                            tweets.map((tweet, index) => (
-                                <TweetCard tweet={tweet} setTweets={setTweets} key={index} />
-                            ))
-                        }
-                    </div>
+                loading
+                    ?
+                    <TweetsLoading cards={10} />
                     :
-                    <div id="tweets" className="mt-4">
+                    <>
                         {
-                            id === "34343" && (
-                                <div className="">
-                                    <textarea
-                                        name="tweet"
-                                        id="tweet"
-                                        rows={5}
-                                        placeholder="Write a tweet"
-                                        value={tweetMessage}
-                                        onChange={(e) => setTweetsMessage(e.target.value)}
-                                    >
+                            tweets && tweets.length > 0 ?
+                                <div className="grid grid-cols-1 gap-4 mt-3">
+                                    {
+                                        id === loggedInUser._id && (
+                                            <div className="space-y-1">
+                                                <textarea
+                                                    name="tweet"
+                                                    id="tweet"
+                                                    rows={4}
+                                                    placeholder="Write a tweet"
+                                                    className="w-full mx-2 px-2 py-1 bg-transparent border outline-none rounded"
+                                                    value={tweetMessage}
+                                                    onChange={(e) => setTweetsMessage(e.target.value)}
+                                                >
 
-                                    </textarea>
-                                    <div className="flex justify-end items-center">
-                                        <MdOutlineEmojiEmotions />
-                                        <MdMoreHoriz />
-                                        <button
-                                            className="hover:bg-purple-700 bg-purple-500 text-white px-4 py-2 rounded-md"
-                                            onClick={handleAddTweetClick}
-                                        >
-                                            Send
-                                        </button>
+                                                </textarea>
+                                                <div className="flex justify-end items-center space-x-4">
+                                                    <MdOutlineEmojiEmotions className="text-2xl cursor-pointer" />
+                                                    <MdMoreHoriz className="text-2xl cursor-pointer" />
+                                                    <button
+                                                        className="hover:bg-purple-700 bg-purple-500 text-white px-6 py-2 rounded-md"
+                                                        onClick={handleAddTweetClick}
+                                                    >
+                                                        Send
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )
+                                    }
+                                    {
+                                        tweets.map((tweet, index) => (
+                                            <TweetCard tweet={tweet} setTweets={setTweets} key={index} />
+                                        ))
+                                    }
+                                </div>
+                                :
+                                <div id="tweets" className="mt-4">
+                                    {
+                                        id === "34343" && (
+                                            <div className="">
+                                                <textarea
+                                                    name="tweet"
+                                                    id="tweet"
+                                                    rows={5}
+                                                    placeholder="Write a tweet"
+                                                    value={tweetMessage}
+                                                    onChange={(e) => setTweetsMessage(e.target.value)}
+                                                >
+
+                                                </textarea>
+                                                <div className="flex justify-end items-center">
+                                                    <MdOutlineEmojiEmotions />
+                                                    <MdMoreHoriz />
+                                                    <button
+                                                        className="hover:bg-purple-700 bg-purple-500 text-white px-4 py-2 rounded-md"
+                                                        onClick={handleAddTweetClick}
+                                                    >
+                                                        Send
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )
+                                    }
+                                    <div className="text-center text-gray-400">
+                                        <h1 className="text-lg">No Tweets</h1>
+                                        <p className="text-sm">This channel has yet to make a Tweet.</p>
                                     </div>
                                 </div>
-                            )
                         }
-                        <div className="text-center text-gray-400">
-                            <h1 className="text-lg">No Tweets</h1>
-                            <p className="text-sm">This channel has yet to make a Tweet.</p>
-                        </div>
-                    </div>
+                    </>
             }
         </>
     )
@@ -364,6 +394,7 @@ function ChannelTweets() {
 function ChannelSubscribers() {
     const [subscribers, setSubscribers] = useState([]);
     const { id } = useParams();
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         axios.get(`${baseUrl}/subscriptions/c/${id}`, {
@@ -380,31 +411,39 @@ function ChannelSubscribers() {
                 console.error(error);
             })
             .finally(() => {
-                // loading false
+                setLoading(false);
             })
     }, [])
 
     return (
         <>
             {
-                subscribers.length > 0 ?
-                    <div className="grid grid-cols-1 gap-4 mt-4 mx-24">
-                        <input
-                            type="text"
-                            placeholder="Search for a subscriber"
-                            className="w-full bg-gray-800 text-white p-3 rounded-md outline-none"
-                        />
-                        {
-                            subscribers.map((subscriber, index) => (
-                                <SubscriberCard subscriber={subscriber} key={index} />
-                            ))
-                        }
-                    </div>
+                loading
+                    ?
+                    <TweetsLoading cards={10} isSubscribers={true} className="mx-20" />
                     :
-                    <EmptySectionComp
-                        title={"No Subscribers"}
-                        description={"This channel has no subscribers yet."}
-                    />
+                    <>
+                        {
+                            subscribers.length > 0 ?
+                                <div className="grid grid-cols-1 gap-4 mt-4 mx-24">
+                                    <input
+                                        type="text"
+                                        placeholder="Search for a subscriber"
+                                        className="w-full bg-gray-800 text-white p-3 rounded-md outline-none"
+                                    />
+                                    {
+                                        subscribers.map((subscriber, index) => (
+                                            <SubscriberCard subscriber={subscriber} key={index} />
+                                        ))
+                                    }
+                                </div>
+                                :
+                                <EmptySectionComp
+                                    title={"No Subscribers"}
+                                    description={"This channel has no subscribers yet."}
+                                />
+                        }
+                    </>
             }
         </>
     )

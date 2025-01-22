@@ -14,12 +14,19 @@ import ProtectedRoute from '@/utils/ProtectedRoute';
 import { toast } from 'react-toastify';
 import { useAuth } from '@/contexts/AuthContext';
 import { FaTrashAlt, FaEdit } from "react-icons/fa";
+import VideosListViewLoading from '@/loadingSkeleton/VideosListViewLoading';
+import Skeleton from 'react-loading-skeleton';
 
 export default function WatchVideo() {
     const [video, setVideo] = useState({});
     const [suggestedVideos, setSuggestedVideos] = useState([]);
     const [showDescription, setShowDescription] = useState(false);
     const { id } = useParams();
+    const navigate = useRouter(null);
+    const [loading, setLoading] = useState({
+        video: true,
+        suggestedVideos: true
+    });
 
     useEffect(() => {
         axios.get(`${baseUrl}/videos/${id}`, {
@@ -36,7 +43,7 @@ export default function WatchVideo() {
                 console.error(error);
             })
             .finally(() => {
-                // loading false
+                setLoading({ ...loading, video: false })
             })
     }, []);
 
@@ -56,7 +63,7 @@ export default function WatchVideo() {
                     console.error(error);
                 })
                 .finally(() => {
-                    // loading false
+                    setLoading({ ...loading, suggestedVideos: false });
                 })
         }
     }, [video]);
@@ -97,12 +104,12 @@ export default function WatchVideo() {
                     totalSubscribers: response.data.statusCode === 201 ? video.totalSubscribers + 1 : video.totalSubscribers - 1
                 })
 
-                if(response.data.statusCode === 201) {
+                if (response.data.statusCode === 201) {
                     toast.success("Subscribed!", {
                         theme: "dark"
                     });
-                } 
-                if(response.data.statusCode === 200) {
+                }
+                if (response.data.statusCode === 200) {
                     toast.success("Unsubscribed!", {
                         theme: "dark"
                     });
@@ -123,87 +130,103 @@ export default function WatchVideo() {
                 <div className="h-screen w-full bg-black text-white flex ">
                     <Sidebar />
                     <div className="p-4 flex flex-col md:flex-row w-full">
-                        {
-                            Object.keys(video).length > 0 && (
-                                <div className="w-full mt-4 md:mx-2">
-                                    <video className='border w-full h-[30rem]' width={1000} height={1000} poster={video?.thumbnail} autoPlay controls>
-                                        <source
-                                            src={video?.videoFile}
-                                            type="video/mp4"
-                                        />
-                                        Your browser does not support the video tag.
-                                    </video>
+                        <div className="w-full">
+                            {
+                                Object.keys(video).length > 0 ? (
+                                    <div className="w-full mt-4 md:mx-2">
+                                        <video className='border w-full h-[30rem]' width={1000} height={1000} poster={video?.thumbnail} autoPlay controls>
+                                            <source
+                                                src={video?.videoFile}
+                                                type="video/mp4"
+                                            />
+                                            Your browser does not support the video tag.
+                                        </video>
 
-                                    {/* video details  */}
-                                    <div className="bg-gray-900 text-white p-4 rounded-md shadow-md mt-4">
-                                        <div className="flex justify-between items-start">
-                                            <div className="">
-                                                <h1 className="text-2xl font-bold">{video?.title}</h1>
-                                                <p className="text-gray-400 text-sm mt-1">
-                                                    {video?.views} Views • {formatTimeAgo(video?.createdAt)}
-                                                </p>
-                                            </div>
-                                            {/* Like, Dislike, and Save */}
-                                            <div className="flex items-center gap-8">
-                                                <button className={`flex items-center gap-1 text-gray-400 hover:text-white`}>
-                                                    <AiOutlineLike
-                                                        className={`${video?.isLiked ? "text-purple-400" : "text-gray-400"} text-xl`}
-                                                        onClick={handleOnLikeClick}
-                                                    />
-                                                    {video?.totalLikes}
-                                                </button>
-                                                {/* <button className="flex items-center gap-1 text-gray-400 hover:text-white">
+                                        {/* video details  */}
+                                        <div className="bg-gray-900 text-white p-4 rounded-md shadow-md mt-4">
+                                            <div className="flex justify-between items-start">
+                                                <div className="">
+                                                    <h1 className="text-2xl font-bold">{video?.title}</h1>
+                                                    <p className="text-gray-400 text-sm mt-1">
+                                                        {video?.views} Views • {formatTimeAgo(video?.createdAt)}
+                                                    </p>
+                                                </div>
+                                                {/* Like, Dislike, and Save */}
+                                                <div className="flex items-center gap-8">
+                                                    <button className={`flex items-center gap-1 text-gray-400 hover:text-white`}>
+                                                        <AiOutlineLike
+                                                            className={`${video?.isLiked ? "text-purple-400" : "text-gray-400"} text-xl`}
+                                                            onClick={handleOnLikeClick}
+                                                        />
+                                                        {video?.totalLikes}
+                                                    </button>
+                                                    {/* <button className="flex items-center gap-1 text-gray-400 hover:text-white">
                                                     <AiOutlineDislike /> 20
                                                 </button> */}
-                                                <button className="ml-auto bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-600">
-                                                    Save
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center gap-3 mt-4">
-                                            <Image
-                                                src={video?.owner[0]?.avatar}
-                                                alt="React Patterns"
-                                                className="w-12 h-12 rounded-full"
-                                                width={1000}
-                                                height={1000}
-                                            />
-                                            <div>
-                                                <h2 className="font-semibold">{video?.owner[0]?.fullName}</h2>
-                                                <p className="text-gray-400 text-sm">{video?.totalSubscribers} {video?.totalSubscribers > 1 ? "Subscribers" : "Subscriber"} </p>
-                                            </div>
-                                            {
-                                                video?.isSubscribed ?
-                                                    <button
-                                                        className="ml-auto bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
-                                                        onClick={handleOnSubscribeClick}
-                                                    >
-                                                        Subscribed
+                                                    <button className="ml-auto bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-600">
+                                                        Save
                                                     </button>
-                                                    :
-                                                    <button
-                                                        className="ml-auto bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
-                                                        onClick={handleOnSubscribeClick}
-                                                    >
-                                                        Subscribe
-                                                    </button>
-                                            }
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-3 mt-4">
+                                                <Image
+                                                    src={video?.owner[0]?.avatar}
+                                                    alt="React Patterns"
+                                                    className="w-12 h-12 rounded-full cursor-pointer"
+                                                    width={1000}
+                                                    height={1000}
+                                                    onClick={() => navigate.push(`/channel/${video?.owner[0]?._id}?tab=videos`)}
+                                                />
+                                                <div onClick={() => navigate.push(`/channel/${video?.owner[0]?._id}?tab=videos`)} className='cursor-pointer'>
+                                                    <h2 className="font-semibold">{video?.owner[0]?.fullName}</h2>
+                                                    <p className="text-gray-400 text-sm">{video?.totalSubscribers} {video?.totalSubscribers > 1 ? "Subscribers" : "Subscriber"} </p>
+                                                </div>
+                                                {
+                                                    video?.isSubscribed ?
+                                                        <button
+                                                            className="ml-auto bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
+                                                            onClick={handleOnSubscribeClick}
+                                                        >
+                                                            Subscribed
+                                                        </button>
+                                                        :
+                                                        <button
+                                                            className="ml-auto bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
+                                                            onClick={handleOnSubscribeClick}
+                                                        >
+                                                            Subscribe
+                                                        </button>
+                                                }
+                                            </div>
+                                            <p className={`text-gray-300 mt-4 cursor-pointer ${!showDescription && 'line-clamp-1'}`} onClick={() => setShowDescription(!showDescription)}>
+                                                {video?.description}
+                                                <span className='text-blue-600 mx-1' onClick={() => setShowDescription(false)}>hide</span>
+                                            </p>
                                         </div>
-                                        <p className={`text-gray-300 mt-4 cursor-pointer ${!showDescription && 'line-clamp-1'}`} onClick={() => setShowDescription(!showDescription)}>
-                                            {video?.description}
-                                            <span className='text-blue-600 mx-1' onClick={() => setShowDescription(false)}>hide</span>
-                                        </p>
+                                        <CommentsSection />
                                     </div>
-                                    <CommentsSection />
-                                </div>
-                            )
-                        }
+                                )
+                                    :
+                                    <div className='w-full h-[30rem]'>
+                                        <Skeleton height={500} />
+                                        <Skeleton height={100} className='my-4' />
+                                        <Skeleton height={100} className='my-4' count={2} />
+                                    </div>
+                            }
+
+                        </div>
 
                         <div className="grid grid-cols-1 gap-4 mt-4 w-[60%]">
                             {
-                                suggestedVideos.map(video => (
-                                    <VideoCardListView key={video._id} video={video} />
-                                ))
+                                loading.suggestedVideos
+                                    ?
+                                    <div className="-mt-4 mx-4">
+                                        <VideosListViewLoading cross={true} cards={10} />
+                                    </div>
+                                    :
+                                    suggestedVideos.map(video => (
+                                        <VideoCardListView key={video._id} video={video} />
+                                    ))
                             }
                         </div>
                     </div>

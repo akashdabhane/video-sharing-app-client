@@ -7,9 +7,11 @@ import axios from 'axios';
 import { baseUrl } from '@/utils/helper';
 import Cookies from 'js-cookie';
 import ProtectedRoute from '@/utils/ProtectedRoute';
+import VideosListViewLoading from '@/loadingSkeleton/VideosListViewLoading';
 
 export default function Search() {
   const [searchResultVideos, setSearchResultVideos] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // hit search api when ready
@@ -27,7 +29,7 @@ export default function Search() {
         console.error(error);
       })
       .finally(() => {
-        // loading false
+        setLoading(false);
       })
   }, [])
 
@@ -51,8 +53,12 @@ export default function Search() {
                   <p>Please try to search something else.</p>
                 </div>
                 :
-                <div className="grid grid-cols-1 gap-4 mt-4">
+                <div className="grid grid-cols-1 gap-4 mt-4 lg:mx-20">
                   {
+                    loading 
+                    ?
+                    <VideosListViewLoading cross={true} cards={20}/>
+                    :
                     searchResultVideos.map((video) => (
                       <VideoCardListView video={video} key={video._id} />
                     ))

@@ -10,6 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { usePathname } from 'next/navigation';
 import { MdOutlineEdit } from "react-icons/md";
 import { toast } from 'react-toastify';
+import Skeleton from 'react-loading-skeleton';
 
 function ChannelCard({ channel, setChannel }) {
     const [editChannelInfo, setEditChannelInfo] = useState(false);
@@ -37,7 +38,7 @@ function ChannelCard({ channel, setChannel }) {
 
 
     const handleUpdateAvatar = (file) => {
-        if(id !== loggedInUser._id) {
+        if (id !== loggedInUser._id) {
             toast("You can't update this channel", {
                 theme: "dark"
             })
@@ -77,7 +78,7 @@ function ChannelCard({ channel, setChannel }) {
 
 
     const handleUpdateCoverImage = (file) => {
-        if(id !== loggedInUser._id) {
+        if (id !== loggedInUser._id) {
             toast("You can't update this channel", {
                 theme: "dark"
             })
@@ -184,28 +185,22 @@ function ChannelCard({ channel, setChannel }) {
                     <MdOutlineEdit className='text-lg' />
                 </label>
                 <div className='flex flex-col'>
-                    <input
-                        type='text'
-                        placeholder='your name'
-                        value={channel?.fullName || ""}
-                        className="text-lg md:text-xl font-bold bg-transparent border-none outline-none"
-                        disabled={editChannelInfo ? false : true}
-                    />
-                    <input
-                        type='text'
-                        placeholder='username'
-                        value={("@" + channel?.username) || ""}
-                        className="text-sm text-gray-400 bg-transparent border-none outline-none"
-                        disabled={editChannelInfo ? false : true}
-                    />
+                    <p className="text-lg md:text-xl font-bold">
+                        {channel?.fullName || <Skeleton width={200} />}
+                    </p>
+                    <p className="text-sm text-gray-400">
+                        {channel?.username ? "@" + channel?.username : <Skeleton width={200} />}
+                    </p>
                     {
                         pathname !== "/channel/info" && (
                             <ul className='space-x-4 flex items-center text-sm text-gray-400'>
                                 <li>
-                                    {channel?.subscribersCount} {channel?.subscribersCount > 1 ? "Subscribers" : "Subscriber"}
+                                    {channel?.subscribersCount || <Skeleton width={50} />}
+                                    {channel?.subscribersCount && (channel?.subscribersCount > 1 ? " Subscribers" : " Subscriber")}
                                 </li>
                                 <li >
-                                    {channel?.channelsSubscribedToCount} Subscribed
+                                    {channel?.channelsSubscribedToCount || <Skeleton width={50} />}
+                                    <span>{channel?.channelsSubscribedToCount && " Subscribed"}</span>
                                 </li>
                             </ul>
                         )

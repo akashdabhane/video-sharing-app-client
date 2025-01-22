@@ -8,9 +8,11 @@ import { baseUrl } from '@/utils/helper';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import ProtectedRoute from '@/utils/ProtectedRoute';
+import VideosListViewLoading from '@/loadingSkeleton/VideosListViewLoading';
 
 function WatchHistoryPage() {
     const [watchedVideos, setWatchedVideos] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         axios.get(`${baseUrl}/users/watch-history`, {
@@ -27,7 +29,7 @@ function WatchHistoryPage() {
                 console.error(error);
             })
             .finally(() => {
-                // loading false
+                setLoading(false);
             })
 
     }, [])
@@ -42,15 +44,23 @@ function WatchHistoryPage() {
                     <div className="p-2 md:p-4 w-full flex flex-col md:flex-row">
                         <div className="grid grid-cols-1 gap-3 md:gap-4 mt-4 w-[50rem] md:mx-6">
                             {
-                                watchedVideos.length > 0
-                                    ?
-                                    watchedVideos.map((video) => (
-                                        <VideoCardListView key={video._id} video={video} cross={true} />
-                                    ))
-                                    :
-                                    <div className='text-center mt-40'>
-                                        <h2>No videos watched</h2>
-                                    </div>
+                                loading
+                                ?
+                                <VideosListViewLoading cross={true} cards={10}/>
+                                :
+                                <>
+                                {
+                                    watchedVideos.length > 0
+                                        ?
+                                        watchedVideos.map((video) => (
+                                            <VideoCardListView key={video._id} video={video} cross={true} />
+                                        ))
+                                        :
+                                        <div className='text-center mt-40'>
+                                            <h2>No videos watched</h2>
+                                        </div>
+                                }
+                                </>
                             }
                         </div>
                     </div>
